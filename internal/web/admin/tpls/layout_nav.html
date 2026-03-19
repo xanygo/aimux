@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-md bg-success sticky-top px-5" data-bs-theme="dark">
+    <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
+            aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href='{{ abs_link "/" }}'>AIMux Gateway</a>
+
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item">
+            <a class="nav-link " href='{{ abs_link "/" }}'>{{ "首页" | xit "layout@home" }}</a>
+        </li>
+        <li class="nav-item">
+            <a class='nav-link {{ .TR.EchoPathHas "/api/" "active" }}' href='{{ abs_link "/api/" }}'>{{ "API 列表" | xit "layout@menu_api" }}</a>
+        </li>
+    </ul>
+
+    <ul class="navbar-nav flex-row flex-wrap ms-md-auto text-white">
+        {{/*
+        <li class="nav-item py-2 py-sm-1  col-sm-auto d-none d-sm-inline-block">
+            <div><a href='{{ abs_link "/" }}' class="nav-link " target="_blank">{{ "首页" | xit "layout@home" }}</a></div>
+        </li>
+        */}}
+        <li class="nav-item py-2 py-sm-1  col-sm-auto">
+            <div class="nav-link text-white pe-2 pe-sm-0">
+                <a class="text-decoration-none text-warning">{{.nvwa_user.Username }}</a>
+            </div>
+        </li>
+        <li class="nav-item py-2 py-sm-1  col-sm-auto">
+            <div class="vr d-none d-lg-flex h-100 mx-lg-2"></div>
+            <hr class="d-lg-none my-2 text-white-50">
+        </li>
+
+        <li class="nav-item py-2 py-sm-1  col-sm-auto">
+            <div><a href='{{ abs_link "/logout" }}' class="nav-link">{{ "退出" | xit "layout@logout"}}</a></div>
+        </li>
+    </ul>
+    </div>
+</nav>
+

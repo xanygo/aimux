@@ -1,0 +1,14 @@
+- Key: manage
+  Other: Manage
+- Key: view
+  Other: view
+- Key: edit
+  Other: edit
+- Key: static_title
+  Other: Static configuration
+- Key: static_subtitle
+  Other: loaded from config file
+- Key: dyn_title
+  Other: Dynamic configuration
+- Key: dyn_subtitle
+  Other: loaded from database

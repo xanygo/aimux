@@ -1,0 +1,6 @@
+{{ $class := "list-group-item list-group-item-action nav-item text-nowrap" }}
+<div class="collapse navbar-collapse d-md-block text-center" id="sidebarMenu">
+    <div class="list-group navbar-nav flex-column ">
+        <a class='{{ $class }} {{ .TR.EchoPathHas "/api/" "active" }}' href='{{ abs_link "/api/" }}'>{{ "API 列表" | xit "layout@menu_api" }}</a>
+    </div>
+</div>

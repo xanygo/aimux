@@ -1,0 +1,26 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href='{{ call .nvwa_asset "bootstrap/bootstrap.css" }}' />
+
+{{- if .deps.Needs "icons.css" -}}
+<link rel="stylesheet" href='{{ call .nvwa_asset "icons/bootstrap-icons.css" }}' />
+{{- end -}}
+
+<link rel="stylesheet" href='{{ call .nvwa_asset "ui/webr.css" }}' />
+
+{{- if .deps.Needs "clipboard.js" -}}
+<script src='{{ call .nvwa_asset "clipboard/clipboard.js" }}'></script>
+{{- end -}}
+
+{{- if .deps.Needs "sortable.js" -}}
+<script src='{{ call .nvwa_asset "sortable/sortable.js" }}'></script>
+{{- end -}}
+
+{{- if .deps.Needs "webr.js" -}}
+<script src='{{ call .nvwa_asset "bootstrap/bootstrap.js" }}'></script>
+<script src='{{ call .nvwa_asset "jquery/jquery.js" }}'></script>
+<script src='{{ call .nvwa_asset "jquery/form2json.js" }}'></script>
+<script src='{{ call .nvwa_asset "ui/webr.js" }}'></script>
+{{- end }}
+
+<title>{{- .SubTitle }} {{ .Title }}</title>

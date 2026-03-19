@@ -1,0 +1,46 @@
+Listen:
+  main: "{env.Listen|127.0.0.1:8080}"
+
+# 数据目录，当为空时，默认会使用应用根目录下的 data 目录
+#DataDir: "{env.AppDataDir}"
+
+# 临时数据目录，当 RPCCache 使用 file 时，缓存内容会存储在此目录下
+#TempDir: "{env.AppTempDir}"
+
+# 运行模式，可选 debug，product
+RunMode: "debug"
+
+
+Other:
+  # 日志等级，可选值：DEBUG，INFO，WARN，ERROR
+  LogLevel: "{env.LogLevel|DEBUG}"
+
+  MemoryLimit: 30 # 内存大小限制，单位  MiB
+  AdminPath: {env.AdminPath|/admin/} # 后台管理页面的地址，可选，默认为 /admin/
+  SecretKey: {env.SecretKey|f2f2aeedcc3e15852712a49234993392}  # 加密秘钥，可选，用于加密图片 id 等
+  Session: {env.Session|"cookie"}
+
+  # 存储数据的 DB 类型，支持：
+  # file-文件
+  # memory-内存
+  # redis：使用 Redis，同时需要配置服务配置名称，配置位于 service 目录。如 redis:kv_rds
+  KVDB: "{env.KVDB|file}"
+
+
+
+Users:
+  - Username: {env.Username|admin}
+    Password: {env.Password|psw}
+
+Services:
+  - name: "first"
+    route: "/v1/chat/completions"
+    nodes:
+      - name: "quanwen"
+        endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+        models:
+          - id: "qwen3-max"
+        auths:
+          - apikey: "api_key1"
+          - apikey: "api_key2"
+

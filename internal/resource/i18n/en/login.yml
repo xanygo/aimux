@@ -1,0 +1,10 @@
+- Key: username
+  Other: Username
+- Key: password
+  Other: Password
+- Key: caption
+  Other: Caption
+- Key: submit
+  Other: Submit
+- Key: reset
+  Other: Reset

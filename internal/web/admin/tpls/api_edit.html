@@ -1,0 +1,26 @@
+{{ .deps.Use "webr.js" }}
+
+{{ if .WriteAble }}
+    <template id="auth_item_tpl_a">
+        {{- $data := xNewMap "prefix" "Auths[]" -}}
+        {{- template "api/auth_item.html" $data -}}
+    </template>
+
+    <template id="auth_item_tpl_b">
+        {{- $data := xNewMap "prefix" "Nodes[][Auths][]" -}}
+        {{- template "api/auth_item.html" $data -}}
+    </template>
+
+    <template id="node_item_tpl">
+        {{- template "api/node_item.html" -}}
+    </template>
+
+
+    <template id="tpl_node_model">
+        {{- template "api/node_model_item.html" -}}
+    </template>
+{{ end }}
+
+<div>
+    {{- template "api/edit_form.html" . -}}
+</div>

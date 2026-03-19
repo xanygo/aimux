@@ -1,0 +1,81 @@
+{{ define "api_list/table_head_tr" }}
+<tr>
+    <th>{{ "编号" | xit "api-form@id" }}</th>
+    <th>{{ "名称" | xit "api-form@name" }}</th>
+    <th>{{ "备注" | xit "api-form@remark" }}</th>
+    <th>{{ "路由" | xit "api-form@route" }}</th>
+    <th>{{ "状态" | xit "api-form@status" }}</th>
+    <th>{{ "管理" | xit "api-list@manage" }}</th>
+</tr>
+{{ end }}
+
+{{ define "api_list/table_tbody" }}
+    {{ range $index, $item := .Items }}
+    <tr>
+        <td>{{ $item.ID }}</td>
+        <td>{{ $item.Name }}</td>
+        <td>{{ $item.Remark }}</td>
+        <td>{{ $item.RouterPattern }}</td>
+        <td>{{- if $item.Disabled -}}
+            <span class="text-danger">{{ "禁用" | xit "api-form@disabled" }}</span>
+            {{- else -}}
+            <span class="text-success">{{ "正常" | xit "api-form@enabled" }}</span>
+            {{- end -}}
+        </td>
+        <td>
+            <a href="View?type={{ $.Type}}&id={{ $item.ID }}">{{ "查看" | xit "api-list@view" }}</a>
+            {{ if ne $.Type "static"}}
+            <a href="Edit?type={{ $.Type}}&id={{ $item.ID }}" class="ms-3">{{ "编辑" | xit "api-list@edit" }}</a>
+            {{ end }}
+        </td>
+    </tr>
+    {{ end }}
+{{ end }}
+
+{{ if .Error }}
+<div class="text-danger p-2 my-2 ">{{ .Error }}</div>
+{{ end }}
+
+<table class="table">
+    <thead>
+        <tr>
+            <td colspan="6" class="bg-primary-subtle rounded ">
+                <span class="text-primary fw-bold">
+                    {{ "静态配置" | xit "api-list@static_title" }}
+                </span>
+                <span class="text-muted">
+                   ( {{ "来源：配置文件" | xit "api-list@static_subtitle" }} )
+                </span>
+
+            </td>
+        </tr>
+         {{ template "api_list/table_head_tr" }}
+    </thead>
+    <tbody>
+
+    {{ $data := xNewMap "Items" .Static "Type" "static" }}
+    {{ template "api_list/table_tbody" $data }}
+    </tbody>
+    <tbody>
+        <tr><td colspan="6">&nbsp;</td></tr>
+    </tbody>
+    <thead>
+    <tr>
+        <td colspan="6" class="bg-primary-subtle rounded">
+            <span class="text-primary fw-bold">
+                {{ "动态配置" | xit "api-list@dyn_title" }}
+            </span>
+            <span class="text-muted">
+                 ( {{ "(来源：数据库)" | xit "api-list@dyn_subtitle" }} )
+            </span>
+
+            <a class="ms-5 btn btn-sm btn-primary" href="New">+</a>
+        </td>
+        {{ template "api_list/table_head_tr" }}
+    </tr>
+    </thead>
+    <tbody>
+    {{ $data := xNewMap "Items" .Dyn "Type" "dyn" }}
+    {{ template "api_list/table_tbody" $data }}
+    </tbody>
+</table>

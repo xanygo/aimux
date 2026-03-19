@@ -1,0 +1,37 @@
+<div class="my-2 p-2 border border-2 border-warning rounded">
+    <div class="row my-2 g-2">
+        <div class="col-sm-6">
+            <div class="input-group">
+                <span class="input-group-text required label-fixed">APIKey：</span>
+                <input name="{{ .prefix }}[APIKey]" type="text" class="form-control" value="{{ .data.APIKey }}">
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="input-group">
+                <span class="input-group-text label-fixed">{{ "权重" | xit "api-form@weight" }}：</span>
+                <input name="{{ .prefix }}[Weight]" type="number" class="form-control" min="1" data-value-type="number" value="{{ or .data.Weight 1 }}">
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="input-group">
+                <span class="input-group-text">{{ "状态" | xit "api-form@status" }}：</span>
+                {{ $selected := xSelectedValue .data.Disabled }}
+                <select name="{{ .prefix }}[Disabled]" class="form-select" data-value-type="boolean">
+                    <option {{ $selected.Value false }}>{{ "正常" | xit "api-form@enabled" }}</option>
+                    <option {{ $selected.Value true }}>{{ "禁用" | xit "api-form@disabled" }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="input-group">
+                <span class="input-group-text label-fixed">{{ "备注" | xit "api-form@remark" }}：</span>
+                <textarea name="{{ .prefix }}[Remark]" class="form-control">{{ .data.Remark }}</textarea>
+            </div>
+        </div>
+    </div>
+</div>

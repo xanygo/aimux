@@ -1,0 +1,30 @@
+- Key: id
+  Other: ID
+- Key: name
+  Other: Name
+- Key: remark
+  Other: Remark
+- Key: status
+  Other: Status
+- Key: enabled
+  Other: Enabled
+- Key: disabled
+  Other: Disabled
+- Key: route
+  Other: Route
+- Key: model_name
+  Other: Model Name
+- Key: model_name_note
+  Other: Optional. If omitted, any value is allowed.
+- Key: methods
+  Other: Methods
+- Key: credentials
+  Other: Credentials
+- Key: need_one
+  Other: At least one is required. One is selected randomly based on weights for each request.
+- Key: nodes
+  Other: Downstream service
+- Key: weight
+  Other: Weight
+- Key: models
+  Other: Models

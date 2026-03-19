@@ -1,0 +1,12 @@
+- Key: home
+  Other: Home
+- Key: logout
+  Other: logout
+- Key: menu_api
+  Other: API List
+- Key: create_api
+  Other: Create API
+- Key: edit_api
+  Other: Edit API
+- Key: view_api
+  Other: View API Detail

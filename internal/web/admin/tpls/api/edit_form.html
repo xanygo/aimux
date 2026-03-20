@@ -89,7 +89,7 @@
             </div>
             <div class="card-body dest_auth">
                 {{ range $index,$item:=.Auths }}
-                {{ $data:=xNewMap "prefix" "Auths[]" "data" $item }}
+                {{ $data:=xNewMap "prefix" "Auths[]" "data" $item "WriteAble" $.WriteAble }}
                 {{ template "api/auth_item.html" $data }}
                 {{ end }}
             </div>
@@ -109,7 +109,8 @@
             </div>
             <div class="card-body dest_nodes">
                 {{ range $index,$item:=.Nodes }}
-                {{ template "api/node_item.html" $item }}
+                    {{ $data:=xNewMap "data" $item "WriteAble" $.WriteAble }}
+                    {{ template "api/node_item.html" $data }}
                 {{ end }}
             </div>
         </div>

@@ -2,22 +2,28 @@
 
 {{ if .WriteAble }}
     <template id="auth_item_tpl_a">
-        {{- $data := xNewMap "prefix" "Auths[]" -}}
+        {{ $item := xNewMap "Weight" 1 }}
+        {{- $data := xNewMap "prefix" "Auths[]" "WriteAble" $.WriteAble "data" $item -}}
         {{- template "api/auth_item.html" $data -}}
     </template>
 
     <template id="auth_item_tpl_b">
-        {{- $data := xNewMap "prefix" "Nodes[][Auths][]" -}}
+        {{ $item := xNewMap "Weight" 1 }}
+        {{- $data := xNewMap "prefix" "Nodes[][Auths][]" "WriteAble" $.WriteAble "data" $item -}}
         {{- template "api/auth_item.html" $data -}}
     </template>
 
     <template id="node_item_tpl">
-        {{- template "api/node_item.html" -}}
+        {{ $item := xNewMap "Weight" 1 }}
+        {{- $data := xNewMap  "WriteAble" $.WriteAble "data" $item -}}
+        {{- template "api/node_item.html" $data -}}
     </template>
 
 
     <template id="tpl_node_model">
-        {{- template "api/node_model_item.html" -}}
+        {{ $item := xNewMap "Weight" 1 }}
+        {{- $data := xNewMap  "data" $item "WriteAble" $.WriteAble -}}
+        {{- template "api/node_model_item.html" $data -}}
     </template>
 {{ end }}
 

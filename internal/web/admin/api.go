@@ -7,9 +7,7 @@ package admin
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
-	"path"
 	"strings"
 
 	"github.com/xanygo/anygo"
@@ -35,7 +33,6 @@ func (a apiHandler) GroupHandler() map[string]xhttp.PatternHandler {
 func (a apiHandler) Index(w http.ResponseWriter, req *http.Request) {
 	dao := factory.ServiceDao()
 	items, err := dao.GetAll(req.Context())
-	log.Println("dao.GetAll=", items, err)
 	values := map[string]any{
 		"Title":  anygo.Must1(xi18n.RB(req.Context(), "API 列表", "layout@menu_api")),
 		"Static": apigate.Static,
@@ -120,6 +117,10 @@ func (a apiHandler) Save(w http.ResponseWriter, req *http.Request) {
 	}
 
 	for _, s := range apigate.Static {
+		if s.Name == srv.Name {
+			webr.WriteJSONAuto(w, fmt.Errorf("duplicate Name %q", srv.Name))
+			return
+		}
 		if s.Route == srv.Route {
 			webr.WriteJSONAuto(w, fmt.Errorf("duplicate route %q", srv.Route))
 			return
@@ -147,7 +148,10 @@ func (a apiHandler) Save(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	webr.WriteJSON(w, 0, "", srv)
+	rr := webr.Response{
+		Jump: dashboard.AbsLink("api/Edit?type=dyn&id=" + srv.ID),
+	}
+	rr.WriteJSON(w)
 }
 
 func (a apiHandler) checkService(srv *apigate.Service) error {
@@ -164,8 +168,14 @@ func (a apiHandler) checkService(srv *apigate.Service) error {
 	if !apigate.ValidatePath(srv.Route) {
 		return fmt.Errorf("invalid route: %q", srv.Route)
 	}
-	if srv.Route != path.Clean(srv.Route) {
-		return fmt.Errorf("invalid route: %q, pls input clean path", srv.Route)
-	}
 	return nil
+}
+
+func (a apiHandler) PostReload(w http.ResponseWriter, req *http.Request) {
+	dao := factory.ServiceDao()
+	items, err := dao.GetAllActive(req.Context())
+	if err == nil {
+		err = apigate.Default().RegisterDny(items)
+	}
+	webr.WriteJSONAuto(w, err)
 }

@@ -1,22 +1,27 @@
-<div class="my-2 p-2 border border-3 border-primary-subtle rounded">
+<div class="my-2 p-2 border border-3 border-primary-subtle rounded api_node_item">
+    {{ if $.WriteAble }}
+    <div class="float-end">
+        <button type="button" class="btn btn-close" onclick="webr.RemoveRow(this,'div.api_node_item')"></button>
+    </div>
+    {{ end }}
     <div class="row my-2 g-2">
         <div class="col-sm-6">
             <div class="input-group">
                 <span class="input-group-text required label-fixed">{{ "名称" | xit "api-form@name" }}：</span>
-                <input name="Nodes[][Name]" type="text" class="form-control" value="{{ .Name }}">
+                <input name="Nodes[][Name]" type="text" class="form-control" value="{{ .data.Name }}">
             </div>
         </div>
 
         <div class="col-sm-3">
             <div class="input-group">
                 <span class="input-group-text label-fixed">{{ "权重" | xit "api-form@weight" }}：</span>
-                <input name="Nodes[][Weight]" type="number" data-value-type="number" class="form-control" min="1" value="{{ or .Weight 1 }}">
+                <input name="Nodes[][Weight]" type="number" data-value-type="number" class="form-control" min="1" value="{{ .data.Weight }}">
             </div>
         </div>
         <div class="col-sm-3">
             <div class="input-group">
                 <span class="input-group-text">{{ "状态" | xit "api-form@status" }}：</span>
-                {{ $selected := xSelectedValue .Disabled }}
+                {{ $selected := xSelectedValue .data.Disabled }}
                 <select name="Nodes[][Disabled]" class="form-select" data-value-type="boolean">
                     <option {{ $selected.Value false }}>{{ "正常" | xit "api-form@enabled" }}</option>
                     <option {{ $selected.Value true }}>{{ "禁用" | xit "api-form@disabled" }}</option>
@@ -28,7 +33,7 @@
         <div class="col">
             <div class="input-group">
                 <span class="input-group-text label-fixed">{{ "备注" | xit "api-form@remark" }}：</span>
-                <textarea name="Nodes[][Remark]" class="form-control">{{ .Remark }}</textarea>
+                <textarea name="Nodes[][Remark]" class="form-control">{{ .data.Remark }}</textarea>
             </div>
         </div>
     </div>
@@ -37,7 +42,7 @@
         <div class="col">
             <div class="input-group">
                 <span class="input-group-text required label-fixed">URL：</span>
-                <input name="Nodes[][Endpoint]" type="url" class="form-control"  value="{{ .Endpoint }}">
+                <input name="Nodes[][Endpoint]" type="url" class="form-control"  value="{{ .data.Endpoint }}">
             </div>
         </div>
     </div>
@@ -46,15 +51,18 @@
         <div class="card my-2">
             <div class="card-header">
                 <span>{{ "模型列表" | xit "api-form@models" }}：</span>
+                {{ if $.WriteAble }}
                 <button type="button" class="btn btn-sm"
                         onclick="webr.AddRow(this,'#tpl_node_model',$(this).closest('.card').find('.dest_models'))"
                 >+</button>
+                {{ end }}
                 <span class="form-text col-form-label">{{ "需至少1个，每次访问时按权重随机选取一个" | xit "api-form@need_one" }}</span>
             </div>
             <div class="card-body my-2" >
                 <div class="dest_models">
-                    {{ range $index,$item:=.Models }}
-                    {{ template "api/node_model_item.html" $item }}
+                    {{ range $index,$item:=.data.Models }}
+                        {{ $data:=xNewMap "data" $item "WriteAble" $.WriteAble }}
+                        {{ template "api/node_model_item.html" $data }}
                     {{ end }}
                 </div>
             </div>
@@ -66,14 +74,16 @@
         <div class="card">
             <div class="card-header">
                 {{ "认证信息" | xit "api-form@credentials" }}
+                {{ if $.WriteAble }}
                 <button type="button" class="btn btn-sm"
                         onclick="webr.AddRow(this,'#auth_item_tpl_b',$(this).closest('.card').find('.dest_auth'))"
                 >+</button>
+                {{ end }}
             </div>
             <div class="card-body dest_auth">
-                {{ range $index,$item:=.Auths }}
-                {{ $data:=xNewMap "prefix" "Nodes[][Auths][]" "data" $item }}
-                {{ template "api/auth_item.html" $data }}
+                {{ range $index,$item:=.data.Auths }}
+                    {{ $data:=xNewMap "prefix" "Nodes[][Auths][]" "data" $item }}
+                    {{ template "api/auth_item.html" $data }}
                 {{ end }}
             </div>
         </div>

@@ -1,4 +1,9 @@
-<div class="my-2 p-2 border border-2 border-warning rounded">
+<div class="my-2 p-2 border border-2 border-warning rounded api_auth_item">
+    {{ if $.WriteAble }}
+    <div class="float-end">
+        <button type="button" class="btn btn-close" onclick="webr.RemoveRow(this,'div.api_auth_item')"></button>
+    </div>
+    {{ end }}
     <div class="row my-2 g-2">
         <div class="col-sm-6">
             <div class="input-group">
@@ -10,7 +15,7 @@
         <div class="col-sm-3">
             <div class="input-group">
                 <span class="input-group-text label-fixed">{{ "权重" | xit "api-form@weight" }}：</span>
-                <input name="{{ .prefix }}[Weight]" type="number" class="form-control" min="1" data-value-type="number" value="{{ or .data.Weight 1 }}">
+                <input name="{{ .prefix }}[Weight]" type="number" class="form-control" min="1" data-value-type="number" value="{{ .data.Weight }}">
             </div>
         </div>
 

@@ -1,9 +1,15 @@
-<div class="my-2 p-2 border border-2 border-info-subtle rounded">
+<div class="my-2 p-2 border border-2 border-info-subtle rounded api_node_model_item">
+    {{ if $.WriteAble }}
+    <div class="float-end">
+        <button type="button" class="btn btn-close" onclick="webr.RemoveRow(this,'div.api_node_model_item')"></button>
+    </div>
+    {{ end }}
+
     <div class="row g-2">
         <div class="col-sm-6">
             <div class="input-group">
                 <span class="input-group-text label-fixed required">ID:</span>
-                <input type="text" name="Nodes[][Models][][ID]" value="{{ .ID }}" class="form-control">
+                <input type="text" name="Nodes[][Models][][ID]" value="{{ .data.ID }}" class="form-control">
             </div>
         </div>
 
@@ -11,14 +17,14 @@
             <div class="input-group">
                 <span class="input-group-text label-fixed">{{ "权重" | xit "api-form@weight" }}：</span>
                 <input name="Nodes[][Models][][Weight]" type="number" class="form-control" min="1"
-                       data-value-type="number" value="{{ or .Weight 1 }}">
+                       data-value-type="number" value="{{  .data.Weight }}">
             </div>
         </div>
 
         <div class="col-sm-3">
             <div class="input-group">
                 <span class="input-group-text">{{ "状态" | xit "api-form@status" }}：</span>
-                {{ $selected := xSelectedValue .Disabled }}
+                {{ $selected := xSelectedValue .data.Disabled }}
                 <select name="Nodes[][Models][][Disabled]" class="form-select" data-value-type="boolean">
                     <option {{ $selected.Value false }}>{{ "正常" | xit "api-form@enabled" }}</option>
                     <option {{ $selected.Value true }}>{{ "禁用" | xit "api-form@disabled" }}</option>
@@ -31,7 +37,7 @@
         <div class="col">
             <div class="input-group">
                 <span class="input-group-text label-fixed">{{ "备注" | xit "api-form@remark" }}：</span>
-                <textarea name="Nodes[][Models][][Remark]" class="form-control">{{ .Remark }}</textarea>
+                <textarea name="Nodes[][Models][][Remark]" class="form-control">{{ .data.Remark }}</textarea>
             </div>
         </div>
     </div>

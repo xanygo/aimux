@@ -1,3 +1,5 @@
+{{ .deps.Use "webr.js" }}
+
 {{ define "api_list/table_head_tr" }}
 <tr>
     <th>{{ "编号" | xit "api-form@id" }}</th>
@@ -66,10 +68,13 @@
                 {{ "动态配置" | xit "api-list@dyn_title" }}
             </span>
             <span class="text-muted">
-                 ( {{ "(来源：数据库)" | xit "api-list@dyn_subtitle" }} )
+                 ( {{ "来源：数据库" | xit "api-list@dyn_subtitle" }} )
             </span>
 
             <a class="ms-5 btn btn-sm btn-primary" href="New">+</a>
+            {{ $data:=xNewMap "url" "Reload" "msg" "Reload" }}
+            <button type="button" class="ms-5 btn btn-sm btn-secondary float-end"
+               data-webr-ajax='{{ xJSON $data }}'>Reload</button>
         </td>
         {{ template "api_list/table_head_tr" }}
     </tr>

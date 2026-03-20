@@ -49,4 +49,5 @@ func initLogger() {
 
 	logLevel := xlog.ParserLevel(logLevelStr)
 	xlog.DefaultLevel = logLevel
+	xlog.InitAllDefaultLogger()
 }

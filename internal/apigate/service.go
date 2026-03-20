@@ -154,7 +154,7 @@ func (s *Service) getAuthToken(req *http.Request) (string, error) {
 
 func (s *Service) checkModel(model string) error {
 	if s.Model != "" && s.Model != model {
-		return errors.New("model does not match")
+		return fmt.Errorf("model does not match, got=%q", model)
 	}
 	return nil
 }

@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/xanygo/anygo/ds/xslice"
+	"github.com/xanygo/anygo/safely"
 	"github.com/xanygo/anygo/xcodec"
 	"github.com/xanygo/anygo/xhttp/xhttpc"
 	"github.com/xanygo/anygo/xlog"
@@ -178,11 +179,9 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	node.serveHTTP(w, req, s)
 }
 
-var errNoAuths = errors.New("system error: miss authorization config")
-
 func (s *Service) checkToken(req *http.Request) error {
 	if len(s.Auths) == 0 {
-		return errNoAuths
+		return nil
 	}
 	token, err := s.getAuthToken(req)
 	if err != nil {
@@ -273,6 +272,7 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 	if err == nil {
 		body, err = io.ReadAll(req.Body)
 	}
+	dumpRequest(s, node, req, body)
 
 	if err != nil {
 		ret := types.NewRequestError(err)
@@ -345,7 +345,16 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 		nr.Header.Set("Content-Encoding", value)
 	}
 	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
+
+	pr, pw := io.Pipe()
+	defer pw.Close()
+
+	go safely.Run(func() {
+		defer pr.Close()
+		dumpResponse(s, node, req, resp, pr)
+	})
+	mw := io.MultiWriter(w, pw)
+	io.Copy(mw, resp.Body)
 }
 
 func (node *Node) oneCredentialByWeight() (*Auth, error) {

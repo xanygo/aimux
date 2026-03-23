@@ -25,6 +25,7 @@ Other:
   # memory-内存
   # redis：使用 Redis，同时需要配置服务配置名称，配置位于 service 目录。如 redis:kv_rds
   KVDB: "{env.KVDB|file}"
+  RPCDump: true # 将请求和响应内容打印出来
 
 
 

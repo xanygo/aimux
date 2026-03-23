@@ -7,10 +7,12 @@ package config
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/xanygo/anygo"
 	"github.com/xanygo/anygo/xattr"
 	"github.com/xanygo/anygo/xcodec"
+	"github.com/xanygo/anygo/xio/xfs"
 	"github.com/xanygo/anygo/xlog"
 
 	"github.com/xanygo/aimux/internal/apigate"
@@ -19,6 +21,7 @@ import (
 func Bootstrap() {
 	initLogger()
 	parserServices()
+	initRPCDump()
 }
 
 func parserServices() {
@@ -42,6 +45,18 @@ func parserServices() {
 		apigate.Static = ss
 		apigate.Default().MustRegisterStatic(ss)
 	}
+}
+
+func initRPCDump() {
+	doDump := xattr.GetDefault[bool]("RPCDump", false)
+	if !doDump {
+		return
+	}
+	w := &xfs.Rotator{
+		Path: filepath.Join(xattr.LogDir(), "rpcdump", "dump.txt"),
+	}
+	anygo.Must(w.Init())
+	apigate.SetDumpWriter(w)
 }
 
 func initLogger() {

@@ -56,7 +56,9 @@
                         onclick="webr.AddRow(this,'#tpl_node_model',$(this).closest('.card').find('.dest_models'))"
                 >+</button>
                 {{ end }}
-                <span class="form-text col-form-label">{{ "需至少1个，每次访问时按权重随机选取一个" | xit "api-form@need_one" }}</span>
+                <span class="form-text col-form-label">
+                    {{ "可选，将 JSON Body 的 model 字段使用 $ID 字段替换。" | xit "api-form@node_models_note" }}
+                </span>
             </div>
             <div class="card-body my-2" >
                 <div class="dest_models">
@@ -79,6 +81,9 @@
                         onclick="webr.AddRow(this,'#auth_item_tpl_b',$(this).closest('.card').find('.dest_auth'))"
                 >+</button>
                 {{ end }}
+                <span class="form-text col-form-label">
+                    {{ "可选，当下游需要 Header Authorization: Bearer $APIKey 校验时填写" | xit "api-form@need_one" }}
+                </span>
             </div>
             <div class="card-body dest_auth">
                 {{ range $index,$item:=.data.Auths }}

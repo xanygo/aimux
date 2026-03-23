@@ -15,16 +15,22 @@
 - Key: model_name
   Other: Model Name
 - Key: model_name_note
-  Other: Optional. If omitted, any value is allowed.
+  Other: Optional. If omitted, any value is allowed.(Verify the model field in the JSON body)
 - Key: methods
   Other: Methods
 - Key: credentials
   Other: Credentials
+- Key: credentials_in_not
+  Other: "Optional.Request need Header Authorization: Bearer $APIKey"
 - Key: need_one
-  Other: At least one is required. One is selected randomly based on weights for each request.
+  Other: At least one is required..
 - Key: nodes
   Other: Downstream service
+- Key: node_models_note
+  Other: "Optional: replace the model field in the JSON Body with the $ID field. A model is randomly selected based on weight on each request."
 - Key: weight
   Other: Weight
+- Key: weight_note
+  Other: "Each time it is accessed, one of the configured entries with weights is randomly selected based on their weights."
 - Key: models
   Other: Models

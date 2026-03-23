@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="col-auto">
-            <span class="form-text col-form-label">{{ "可选，若无值，则客户端可以传任意值" | xit "api-form@model_name_note" }}</span>
+            <span class="form-text col-form-label">{{ "可选，若无值，则客户端可以传任意值(验证 JSON Body 的 model 字段)" | xit "api-form@model_name_note" }}</span>
         </div>
     </div>
 
@@ -85,7 +85,9 @@
                         onclick="webr.AddRow(this,'#auth_item_tpl_a',$(this).closest('.card').find('.dest_auth'))"
                 >+</button>
                 {{ end }}
-                <span class="form-text col-form-label text-danger">{{ "至少有一个有效配置" | xit "api-form@need_one" }}</span>
+                <span class="form-text col-form-label text-danger">
+                    {{ "可选，请求需要携带 Header Authorization: Bearer $APIKey" | xit "api-form@need_one" }}
+                </span>
             </div>
             <div class="card-body dest_auth">
                 {{ range $index,$item:=.Auths }}
@@ -105,7 +107,9 @@
                         onclick="webr.AddRow(this,'#node_item_tpl',$(this).closest('.card').find('.dest_nodes'))"
                 >+</button>
                 {{ end }}
-                <span class="form-text col-form-label"> {{ "需至少1个，每次访问时按权重随机选取一个" | xit "api-form@need_one" }}</span>
+                <span class="form-text col-form-label">
+                    {{ "必填，至少一个" | xit "api-form@need_one" }}
+                </span>
             </div>
             <div class="card-body dest_nodes">
                 {{ range $index,$item:=.Nodes }}
@@ -116,6 +120,13 @@
         </div>
     </div>
     {{ end }} <!-- end with -->
+
+    <div>
+        <p class="form-text">
+            {{ "所有配置了权重的条目，每次访问时按权重随机选取一个使用" | xit "api-form@weight_note" }}
+        </p>
+
+    </div>
 
     {{ if .WriteAble }}
     <div class="row my-2 g-2">

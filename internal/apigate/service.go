@@ -16,7 +16,6 @@ import (
 
 	"github.com/xanygo/anygo/ds/xslice"
 	"github.com/xanygo/anygo/xcodec"
-	"github.com/xanygo/anygo/xhttp"
 	"github.com/xanygo/anygo/xhttp/xhttpc"
 	"github.com/xanygo/anygo/xlog"
 
@@ -165,19 +164,6 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	xlog.Info(req.Context(), "Service.ServeHTTP")
 
 	err := s.checkToken(req)
-	data := make(map[string]any)
-	if err == nil {
-		err = xhttp.Bind(req, &data)
-	}
-	model, ok := data["model"].(string)
-	if err == nil && !ok {
-		err = errors.New("no model field")
-	}
-
-	if err == nil {
-		err = s.checkModel(model)
-	}
-
 	if err != nil {
 		ret := types.NewRequestError(err)
 		ret.Write(w)
@@ -189,7 +175,7 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		ret.Write(w)
 		return
 	}
-	node.serveHTTP(w, req, data)
+	node.serveHTTP(w, req, s)
 }
 
 var errNoAuths = errors.New("system error: miss authorization config")
@@ -276,12 +262,44 @@ func (node *Node) Clone() *Node {
 
 var client = &xhttpc.Client{}
 
-func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, data map[string]any) {
+func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service) {
 	cred, err := node.oneCredentialByWeight()
+
 	var mod *Model
 	if err == nil {
 		mod, err = node.oneModelByWeight()
 	}
+	var body []byte
+	if err == nil {
+		body, err = io.ReadAll(req.Body)
+	}
+
+	if err != nil {
+		ret := types.NewRequestError(err)
+		ret.Write(w)
+		return
+	}
+
+	if s.Model != "" || mod != nil {
+		data := make(map[string]any)
+		if err == nil {
+			err = xcodec.JSON.Decode(body, &data)
+		}
+		inputModel, ok := data["model"].(string)
+		if err == nil && !ok {
+			err = errors.New("no model field")
+		}
+		if err == nil {
+			if s.Model != "" && s.Model != inputModel {
+				err = fmt.Errorf("invalid model %q", inputModel)
+			}
+			if err == nil && mod != nil {
+				data["model"] = mod.ID
+				body, err = xcodec.JSON.Encode(data)
+			}
+		}
+	}
+
 	if err != nil {
 		ret := types.NewRequestError(err)
 		ret.Write(w)
@@ -304,15 +322,13 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, data map[s
 		nr.Header.Set("User-Agent", value)
 	}
 
-	data["model"] = mod.ID
-	bf, err := xcodec.JSON.Encode(data)
 	if err != nil {
 		ret := types.NewRequestError(err)
 		ret.Write(w)
 		return
 	}
 	nr.GetBody = func() (io.ReadCloser, error) {
-		return io.NopCloser(bytes.NewReader(bf)), nil
+		return io.NopCloser(bytes.NewReader(body)), nil
 	}
 
 	resp, err := client.RoundTrip(nr)
@@ -356,7 +372,7 @@ func (node *Node) oneCredentialByWeight() (*Auth, error) {
 
 func (node *Node) oneModelByWeight() (*Model, error) {
 	if len(node.Models) == 0 {
-		return nil, errors.New("no enabled model available")
+		return nil, nil // 允许为空
 	}
 	var totalWeight int
 

@@ -45,7 +45,7 @@ func doInit() {
 
 	loadApiGate()
 
-	xservice.DefaultRegistry().Register(xservice.DummyService())
+	xservice.DefaultRegistry().Register(xservice.DefaultDummyService())
 }
 
 func loadApiGate() {

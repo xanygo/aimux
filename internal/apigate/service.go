@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/xanygo/anygo/ds/xslice"
 	"github.com/xanygo/anygo/safely"
@@ -275,6 +276,7 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 	dumpRequest(s, node, req, body)
 
 	if err != nil {
+		dumpError(s, node, req, "read_request", err)
 		ret := types.NewRequestError(err)
 		ret.Write(w)
 		return
@@ -301,10 +303,12 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 	}
 
 	if err != nil {
+		dumpError(s, node, req, "decode_req_body", err)
 		ret := types.NewRequestError(err)
 		ret.Write(w)
 		return
 	}
+
 	nr, err := http.NewRequestWithContext(req.Context(), req.Method, node.Endpoint, nil)
 	if err != nil {
 		ret := types.NewRequestError(err)
@@ -322,17 +326,13 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 		nr.Header.Set("User-Agent", value)
 	}
 
-	if err != nil {
-		ret := types.NewRequestError(err)
-		ret.Write(w)
-		return
-	}
 	nr.GetBody = func() (io.ReadCloser, error) {
 		return io.NopCloser(bytes.NewReader(body)), nil
 	}
 
 	resp, err := client.RoundTrip(nr)
 	if err != nil {
+		dumpError(s, node, req, "fetch endpoint", err)
 		ret := types.NewRequestError(err)
 		ret.Write(w)
 		return
@@ -346,8 +346,20 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 	}
 	w.WriteHeader(resp.StatusCode)
 
+	if rpcDumpWriter() == nil {
+		io.Copy(w, resp.Body)
+		return
+	}
+
 	pr, pw := io.Pipe()
-	defer pw.Close()
+	oc := sync.OnceFunc(func() {
+		pw.Close()
+	})
+	defer oc()
+	go safely.Run(func() {
+		<-req.Context().Done()
+		oc()
+	})
 
 	go safely.Run(func() {
 		defer pr.Close()

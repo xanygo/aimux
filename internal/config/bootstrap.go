@@ -14,6 +14,8 @@ import (
 	"github.com/xanygo/anygo/xcodec"
 	"github.com/xanygo/anygo/xio/xfs"
 	"github.com/xanygo/anygo/xlog"
+	"github.com/xanygo/anygo/xnet/xrpc"
+	"github.com/xanygo/anygo/xnet/xservice"
 
 	"github.com/xanygo/aimux/internal/apigate"
 )
@@ -65,4 +67,10 @@ func initLogger() {
 	logLevel := xlog.ParserLevel(logLevelStr)
 	xlog.DefaultLevel = logLevel
 	xlog.InitAllDefaultLogger()
+
+	err := xservice.LoadDir(context.Background(), filepath.Join(xattr.ConfDir(), "service", "*.yml"))
+	anygo.Must(err)
+
+	rl := &xrpc.Logger{}
+	xrpc.RegisterTCPIT(rl.Interceptor())
 }

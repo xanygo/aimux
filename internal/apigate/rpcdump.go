@@ -5,6 +5,8 @@
 package apigate
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -66,10 +68,42 @@ func dumpRequest(s *Service, node *Node, req *http.Request, body []byte) {
 	}
 
 	buf.WriteString("\nbody:\n")
-	buf.Write(body)
+	buf.Write(tryPrettyJSON(body))
 	buf.WriteString("\n\n<----request finished---->\n\n")
 
 	w.Write(buf.Bytes())
+}
+
+func tryPrettyJSON(data []byte) []byte {
+	nd := bytes.TrimSpace(data)
+	if !bytes.HasPrefix(nd, []byte("{")) || !bytes.HasSuffix(nd, []byte("}")) {
+		return data
+	}
+	var d map[string]any
+	if err := json.Unmarshal(nd, &d); err != nil {
+		return data
+	}
+	bf, err := json.MarshalIndent(d, "", "  ")
+	if err == nil {
+		return bf
+	}
+	return data
+}
+
+func dumpError(s *Service, node *Node, req *http.Request, typ string, err error) {
+	w := rpcDumpWriter()
+	if w == nil {
+		return
+	}
+	bf := bp.Get()
+	defer bp.Put(bf)
+
+	fmt.Fprintf(bf, "<----- response %s error -------->\n", typ)
+	fmt.Fprintf(bf, "service=%s node=%s endpoint=%s\n", s.Name, node.Name, node.Endpoint)
+	fmt.Fprintf(bf, "now=%s remote=%s logid=%s\n\n", time.Now().String(), req.RemoteAddr, xlog.FindLogID(req.Context()))
+	fmt.Fprintf(bf, "%s\n\n", err.Error())
+
+	w.Write(bf.Bytes())
 }
 
 func dumpResponse(s *Service, node *Node, req *http.Request, resp *http.Response, rd io.Reader) {
@@ -77,16 +111,16 @@ func dumpResponse(s *Service, node *Node, req *http.Request, resp *http.Response
 	if w == nil {
 		return
 	}
-	bf, _ := httputil.DumpResponse(resp, false)
 
 	fmt.Fprint(w, "<----- response start -------->\n")
 	fmt.Fprintf(w, "service=%s node=%s endpoint=%s\n", s.Name, node.Name, node.Endpoint)
 	fmt.Fprintf(w, "now=%s remote=%s logid=%s\n\n", time.Now().String(), req.RemoteAddr, xlog.FindLogID(req.Context()))
 
+	bf, _ := httputil.DumpResponse(resp, false)
 	w.Write(bf)
 	fmt.Fprint(w, "\nbody:\n")
-	io.Copy(w, rd)
-	fmt.Fprint(w, "<----- response finished -------->\n\n")
+	n, err := io.Copy(w, rd)
+	fmt.Fprintf(w, "\n<----- response finished (n=%d, err=%v) -------->\n\n", n, err)
 }
 
 var dumpWriterStore = &xsync.OnceInit[io.Writer]{

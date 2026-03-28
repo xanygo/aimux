@@ -24,7 +24,7 @@ func Run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	apiListen := xattr.AppMain().GetListen("api")
+	apiListen, _ := xattr.AppMain().GetListen("api")
 	// 若没有配置独立的 api gateway 端口，则和 admin 使用同一个端口
 	if apiListen == "" {
 		return runAdminServer(ctx, true)
@@ -41,7 +41,7 @@ func Run() error {
 }
 
 func runAdminServer(ctx context.Context, withAPI bool) error {
-	listen := xattr.AppMain().GetListen("admin")
+	listen := xattr.AppMain().MustGetListen("admin")
 	xlog.Info(ctx, "admin server Listen", xlog.String("Listen", listen))
 	ser := &http.Server{
 		Handler: initAdminRouter(withAPI),

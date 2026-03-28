@@ -6,15 +6,10 @@ package config
 
 import (
 	"github.com/xanygo/anygo/xattr"
-	"github.com/xanygo/anygo/xhttp"
 )
 
 func AdminPath() string {
 	return xattr.GetDefault[string]("AdminPath", "/admin/")
-}
-
-func AdminLink(s string) string {
-	return xhttp.PathJoin(AdminPath(), s)
 }
 
 func SecretKey() string {

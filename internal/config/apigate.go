@@ -6,12 +6,15 @@ package config
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
+	"log"
 	"path/filepath"
 
 	"github.com/xanygo/anygo"
 	"github.com/xanygo/anygo/xattr"
-	"github.com/xanygo/anygo/xcodec"
+	"github.com/xanygo/anygo/xcfg"
 	"github.com/xanygo/anygo/xio/xfs"
 	"github.com/xanygo/anygo/xlog"
 
@@ -20,15 +23,25 @@ import (
 
 // 加载配置文件中的静态配置
 func loadStaticAPIServices() {
-	services, ok := xattr.AppMain().GetOther("Services")
-	xlog.Info(context.Background(), "read AppMain().Services", xlog.Bool("exists", ok))
+	value, ok := xattr.AppMain().GetOther("StaticAPIFile")
+	xlog.Info(context.Background(), "read AppMain().StaticAPIFile", xlog.Any("value", value), xlog.Bool("ok", ok))
 	if !ok {
 		return
 	}
 
+	filename, ok := value.(string)
+	if !ok {
+		log.Fatalf("invalid StaticAPIFile=%#v", value)
+	}
+
 	var ss apigate.Services
-	anygo.Must(xcodec.Convert(services, &ss))
-	xlog.Info(context.Background(), "AppMain().Services", xlog.Int("len", len(ss)))
+	err := xcfg.Parse(filename, &ss)
+	xlog.Info(context.Background(), "parser static_api", xlog.ErrorAttr("err", err))
+	if err != nil && errors.Is(err, fs.ErrNotExist) {
+		xlog.Info(context.Background(), "static_api file not found, skipped")
+	}
+	anygo.Must(err)
+
 	var num = 1
 	for index := range ss {
 		for {

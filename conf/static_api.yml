@@ -1,0 +1,40 @@
+# 静态服务配置，可选，建议还是使用 web
+- name: "first"
+  route: "/v1/chat/completions"
+  methods: ["GET","POST"] # 允许调用接口的 HTTP Method，可选。默认为 ANY：不限制
+  remark: "备注信息" # 备注信息，可选
+  disabled: true # 是否禁用，可选，默认 false
+  model: "auto" # 要求传入 json body 中包含 model 字段的值，可选
+  auths: # 接口认证信息，可选，若有有效值，则校验
+    - apikey: "api_key1"  # 秘钥
+      disabled: true # 是否禁用，可选，默认 false
+      remark: "备注信息" # 备注信息，可选
+      weight: 1 # 权重，可选
+    - apikey: "api_key2"  # 第 2 条
+  nodes:  # 下游节点，应有至少 1 个有效的
+    - name: "quanwen"
+      endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+      disabled: true # 是否禁用，可选，默认 false
+      remark: "备注信息" # 备注信息，可选
+      weight: 1 # 权重，可选
+      models: # 模型列表，可选，每次从列表中按权重选取出一个，将 json body 中包含 model 字段的值替换
+        - id: "qwen3-max"  # 大模型的模型 ID
+          disabled: false # 是否禁用，可选，默认 false
+          remark: "备注信息" # 备注信息，可选
+          weight: 1 # 权重，可选
+      auths: # endpoint 的认证秘钥列表，可选
+        - apikey: "api_key1" # 秘钥
+          disabled: true # 是否禁用，可选，默认 false
+          remark: "备注信息" # 备注信息，可选
+          weight: 1 # 权重，可选
+        - apikey: "api_key2"
+
+- name: "second_api"
+  route: "/ai-search"
+  auths: # 接口认证信息，可选
+    - apikey: "api_key1"  # 第 1 条
+  nodes:
+    - name: "xxx-search"
+      endpoint: "https://example.com/v100/search"
+      auths:
+        - apikey: "api_key1"

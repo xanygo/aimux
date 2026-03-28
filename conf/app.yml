@@ -18,32 +18,34 @@ Other:
   # 日志等级，可选值：DEBUG，INFO，WARN，ERROR
   LogLevel: "{env.LogLevel|DEBUG}"
 
-  AdminPath: {env.APPAdminPath|/admin} # 后台管理页面的地址，可选，默认为 /admin/
-  SecretKey: {env.APPSecretKey|f2f2aeedcc3e15852712a49234993392}  # 加密秘钥，用于加密数据 等
+  # 后台管理页面的地址，可选，默认为 /admin/
+  AdminPath: {env.APPAdminPath|/admin/}
+
+  # 加密秘钥，用于加密数据, 请一定修改，不使用默认值
+  SecretKey: {env.APPSecretKey|f2f2aeedcc3e15852712a49234993392}
+
+  # 管理页面的 HTTP 会话信息存储方式，可选 cookie,memory,file,kvdb
+  # cookie: 存储到 http cookie 信息中
+  # memory: 存储在内存中，应用重启后就丢失，管理页面需要重新登录
+  # file: 存储在应用的 temp 目录的文件中，默认值
+  # kvdb： 存储在 kv 数据引擎，详见下列 KVDB 配置
   Session: {env.APPSession|"cookie"}
 
-  # 存储数据的 DB 类型，支持：
-  # file-文件
-  # memory-内存
+  # 存储数据的 Key-Value DB 类型，必填，支持：
+  # file：使用文件存储，存储在应用的 {DataDir}/xkv_db/ 目录下
+  # memory：内存,应用重启后丢失
   # redis：使用 Redis，同时需要配置服务配置名称，配置位于 service 目录。如 redis:kv_rds
   KVDB: "{env.APPKVDB|file}"
-  RPCDump: true # 将请求和响应内容打印出来
+
+  # 将请求和响应内容打印存储到 log/rpcdump/ 目录中，可用于分析&观察请求数据，可选，默认为 false
+  RPCDump: true
 
 # 管理员列表，必填
 Users:
   - Username: {env.APPUsername|admin}
     Password: {env.APPPassword|psw}
 
-# 静态服务配置，可选
-Services:
-  - name: "first"
-    route: "/v1/chat/completions"
-    nodes:
-      - name: "quanwen"
-        endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-        models:
-          - id: "qwen3-max"
-        auths:
-          - apikey: "api_key1"
-          - apikey: "api_key2"
+# 读取静态服务配置的文件名，可选
+# 建议还是使用 web 页面配置，所有配置的内容都会加密存储，安全性更好
+StaticAPIFile: {env.APPEnableStaticAPI|static_api.yml}
 

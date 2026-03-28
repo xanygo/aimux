@@ -25,10 +25,13 @@
             {{- end -}}
         </td>
         <td>
-            <a href="View?type={{ $.Type}}&id={{ $item.ID }}">{{ "查看" | xit "api-list@view" }}</a>
+            <a href="View?type={{ $.Type}}&id={{ $item.ID }}">🖥️ {{ "查看" | xit "api-list@view" }}</a>
+            &nbsp;
             {{ if ne $.Type "static"}}
-            <a href="Edit?type={{ $.Type}}&id={{ $item.ID }}" class="ms-3">{{ "编辑" | xit "api-list@edit" }}</a>
+            <a href="Edit?type={{ $.Type}}&id={{ $item.ID }}" class="ms-3">📝 {{ "编辑" | xit "api-list@edit" }}</a>
             {{ end }}
+            &nbsp;
+            <a href="View?type={{ $.Type}}&id={{ $item.ID }}&clear=1">🔎 {{ "清理&查看" | xit "api-list@view" }}</a>
         </td>
     </tr>
     {{ end }}

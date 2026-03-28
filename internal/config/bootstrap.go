@@ -6,71 +6,43 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"path/filepath"
 
 	"github.com/xanygo/anygo"
 	"github.com/xanygo/anygo/xattr"
-	"github.com/xanygo/anygo/xcodec"
-	"github.com/xanygo/anygo/xio/xfs"
 	"github.com/xanygo/anygo/xlog"
 	"github.com/xanygo/anygo/xnet/xrpc"
 	"github.com/xanygo/anygo/xnet/xservice"
-
-	"github.com/xanygo/aimux/internal/apigate"
 )
 
 func Bootstrap() {
-	initLogger()
-	parserServices()
-	initRPCDump()
-}
+	initFramework()
 
-func parserServices() {
-	services, ok := xattr.AppMain().GetOther("Services")
-	xlog.Info(context.Background(), "read AppMain().Services", xlog.Bool("exists", ok))
-	if ok {
-		var ss apigate.Services
-		anygo.Must(xcodec.Convert(services, &ss))
-		xlog.Info(context.Background(), "AppMain().Services", xlog.Int("len", len(ss)))
-		var num = 1
-		for index := range ss {
-			for {
-				id := fmt.Sprintf("static_%d", num)
-				if s, _ := ss.FIndByID(id); s == nil {
-					ss[index].ID = id
-					break
-				}
-				num++
-			}
-		}
-		apigate.Static = ss
-		apigate.Default().MustRegisterStatic(ss)
+	{
+		initRPCDump()
+		loadStaticAPIServices()
 	}
 }
 
-func initRPCDump() {
-	doDump := xattr.GetDefault[bool]("RPCDump", false)
-	if !doDump {
-		return
+// 依据配置，初始化框架
+func initFramework() {
+	// 可选，初始化日志配置
+	{
+		logLevelStr := xattr.GetDefault[string]("LogLevel", "INFO")
+		logLevel := xlog.ParserLevel(logLevelStr)
+		xlog.DefaultLevel = logLevel
+		xlog.InitAllDefaultLogger()
 	}
-	w := &xfs.Rotator{
-		Path: filepath.Join(xattr.LogDir(), "rpcdump", "dump.txt"),
+
+	// 可选：加载 service 配置
+	{
+		err := xservice.LoadDir(context.Background(), filepath.Join(xattr.ConfDir(), "service", "*.yml"))
+		anygo.Must(err)
 	}
-	anygo.Must(w.Init())
-	apigate.SetDumpWriter(w)
-}
 
-func initLogger() {
-	logLevelStr := xattr.GetDefault[string]("LogLevel", "INFO")
-
-	logLevel := xlog.ParserLevel(logLevelStr)
-	xlog.DefaultLevel = logLevel
-	xlog.InitAllDefaultLogger()
-
-	err := xservice.LoadDir(context.Background(), filepath.Join(xattr.ConfDir(), "service", "*.yml"))
-	anygo.Must(err)
-
-	rl := &xrpc.Logger{}
-	xrpc.RegisterTCPIT(rl.Interceptor())
+	// 可选：给 RPC client 注册日志中间件，用于打印日志
+	{
+		rl := &xrpc.Logger{}
+		xrpc.RegisterTCPIT(rl.Interceptor())
+	}
 }

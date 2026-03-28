@@ -65,6 +65,11 @@ func (a apiHandler) View(w http.ResponseWriter, req *http.Request) {
 		showError(w, req, err.Error())
 		return
 	}
+
+	// 只保留有效的配置内容
+	if srv != nil && req.URL.Query().Get("clear") != "" {
+		srv = srv.CloneEnabled()
+	}
 	values := map[string]any{
 		"Title":     anygo.Must1(xi18n.RB(req.Context(), " 查看API", "layout@view_api")) + "-" + srv.Name,
 		"Srv":       srv,
@@ -173,9 +178,6 @@ func (a apiHandler) checkService(srv *apigate.Service) error {
 
 func (a apiHandler) PostReload(w http.ResponseWriter, req *http.Request) {
 	dao := factory.ServiceDao()
-	items, err := dao.GetAllActive(req.Context())
-	if err == nil {
-		err = apigate.Default().RegisterDny(items)
-	}
+	err := apigate.LoadFromDB(req.Context(), dao)
 	webr.WriteJSONAuto(w, err)
 }

@@ -7,7 +7,6 @@ package config
 import (
 	"sync"
 
-	"github.com/xanygo/anygo/xattr"
 	"github.com/xanygo/anygo/xcfg"
 )
 
@@ -42,8 +41,4 @@ func FindUser(name string) *User {
 func Users() (users []User) {
 	adminUserOnce.Do(loadAdminUser)
 	return allUsers
-}
-
-func SecretKey() string {
-	return xattr.GetDefault[string]("SecretKey", "e60734fa48b72bb766aa639060352efd")
 }

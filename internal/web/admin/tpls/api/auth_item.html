@@ -1,4 +1,4 @@
-<div class="my-2 p-2 border border-2 border-warning rounded api_auth_item">
+<div class="my-2 p-2 border border-2 border-warning  rounded api_auth_item {{ if .data.Disabled }} bg-warning-subtle {{ end }} ">
     {{ if $.WriteAble }}
     <div class="float-end">
         <button type="button" class="btn btn-close" onclick="webr.RemoveRow(this,'div.api_auth_item')"></button>

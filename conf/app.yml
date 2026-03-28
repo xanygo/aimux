@@ -1,5 +1,8 @@
 Listen:
-  main: "{env.Listen|127.0.0.1:8080}"
+  # 管理页面 web server 地址，必填
+  admin: "{env.APPListenAdmin|127.0.0.1:8080}"
+  # api server 地址，可选，当为空时，api 注册到 管理页面
+  api: "{env.APPListenAPI|127.0.0.1:8081}"
 
 # 数据目录，当为空时，默认会使用应用根目录下的 data 目录
 #DataDir: "{env.AppDataDir}"
@@ -15,24 +18,23 @@ Other:
   # 日志等级，可选值：DEBUG，INFO，WARN，ERROR
   LogLevel: "{env.LogLevel|DEBUG}"
 
-  MemoryLimit: 30 # 内存大小限制，单位  MiB
-  AdminPath: {env.AdminPath|/admin/} # 后台管理页面的地址，可选，默认为 /admin/
-  SecretKey: {env.SecretKey|f2f2aeedcc3e15852712a49234993392}  # 加密秘钥，可选，用于加密图片 id 等
-  Session: {env.Session|"cookie"}
+  AdminPath: {env.APPAdminPath|/admin} # 后台管理页面的地址，可选，默认为 /admin/
+  SecretKey: {env.APPSecretKey|f2f2aeedcc3e15852712a49234993392}  # 加密秘钥，用于加密数据 等
+  Session: {env.APPSession|"cookie"}
 
   # 存储数据的 DB 类型，支持：
   # file-文件
   # memory-内存
   # redis：使用 Redis，同时需要配置服务配置名称，配置位于 service 目录。如 redis:kv_rds
-  KVDB: "{env.KVDB|file}"
+  KVDB: "{env.APPKVDB|file}"
   RPCDump: true # 将请求和响应内容打印出来
 
-
-
+# 管理员列表，必填
 Users:
-  - Username: {env.Username|admin}
-    Password: {env.Password|psw}
+  - Username: {env.APPUsername|admin}
+    Password: {env.APPPassword|psw}
 
+# 静态服务配置，可选
 Services:
   - name: "first"
     route: "/v1/chat/completions"

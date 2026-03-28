@@ -5,8 +5,6 @@
 package apigate
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,7 +18,14 @@ import (
 
 var bp = xsync.NewBytesBufferPool(1024 * 100)
 
-func dumpRequest(s *Service, node *Node, req *http.Request, body []byte) {
+var sensitiveKeys = map[string]struct{}{
+	"authorization": {},
+	"cookie":        {},
+	"token":         {},
+	"password":      {},
+}
+
+func dumpRequest(s *Service, node *Node, req *http.Request, body []byte, mod *Model) {
 	w := rpcDumpWriter()
 	if w == nil {
 		return
@@ -28,19 +33,15 @@ func dumpRequest(s *Service, node *Node, req *http.Request, body []byte) {
 	buf := bp.Get()
 	defer bp.Put(buf)
 
+	var modelID string
+	if mod != nil {
+		modelID = mod.ID
+	}
 	buf.WriteString("<----- request start -------->\n")
-	fmt.Fprintf(buf, "service=%s node=%s\n", s.Name, node.Name)
+	fmt.Fprintf(buf, "service=%s node=%s model=%s\n", s.Name, node.Name, modelID)
 	fmt.Fprintf(buf, "now=%s remote=%s logid=%s\n\n", time.Now().String(), req.RemoteAddr, xlog.FindLogID(req.Context()))
 
 	fmt.Fprintf(buf, "%s %s %s\n", req.Method, req.URL.RequestURI(), req.Proto)
-
-	// 2. Header（逐行处理）
-	sensitiveKeys := map[string]struct{}{
-		"authorization": {},
-		"cookie":        {},
-		"token":         {},
-		"password":      {},
-	}
 
 	for key, values := range req.Header {
 		lk := strings.ToLower(key)
@@ -51,7 +52,7 @@ func dumpRequest(s *Service, node *Node, req *http.Request, body []byte) {
 				for _, cv := range strings.Split(v, ";") {
 					arr := strings.SplitN(cv, "=", 2)
 					if len(arr) == 2 {
-						tmp = append(tmp, fmt.Sprintf("%s=%s", arr[0], strings.Repeat("*", len(arr[1]))))
+						tmp = append(tmp, fmt.Sprintf("%s=*%d", arr[0], len(arr[1])))
 					} else {
 						tmp = append(tmp, cv)
 					}
@@ -60,34 +61,18 @@ func dumpRequest(s *Service, node *Node, req *http.Request, body []byte) {
 				continue
 			}
 			if _, ok := sensitiveKeys[lk]; ok {
-				fmt.Fprintf(buf, "%s: %s\n", key, strings.Repeat("*", len(v)))
+				fmt.Fprintf(buf, "%s: *%d\n", key, len(v))
 			} else {
 				fmt.Fprintf(buf, "%s: %s\n", key, v)
 			}
 		}
 	}
 
-	buf.WriteString("\nbody:\n")
-	buf.Write(tryPrettyJSON(body))
+	fmt.Fprintf(buf, "\nbody (len=%d):\n", len(body))
+	buf.Write(body)
 	buf.WriteString("\n\n<----request finished---->\n\n")
 
 	w.Write(buf.Bytes())
-}
-
-func tryPrettyJSON(data []byte) []byte {
-	nd := bytes.TrimSpace(data)
-	if !bytes.HasPrefix(nd, []byte("{")) || !bytes.HasSuffix(nd, []byte("}")) {
-		return data
-	}
-	var d map[string]any
-	if err := json.Unmarshal(nd, &d); err != nil {
-		return data
-	}
-	bf, err := json.MarshalIndent(d, "", "  ")
-	if err == nil {
-		return bf
-	}
-	return data
 }
 
 func dumpError(s *Service, node *Node, req *http.Request, typ string, err error) {

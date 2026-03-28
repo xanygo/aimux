@@ -10,9 +10,13 @@ import (
 )
 
 func AdminPath() string {
-	return xattr.GetDefault[string]("AdminPath", "/admin")
+	return xattr.GetDefault[string]("AdminPath", "/admin/")
 }
 
 func AdminLink(s string) string {
 	return xhttp.PathJoin(AdminPath(), s)
+}
+
+func SecretKey() string {
+	return xattr.GetDefault[string]("SecretKey", "e60734fa48b72bb766aa639060352efd")
 }

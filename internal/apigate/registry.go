@@ -5,6 +5,7 @@
 package apigate
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"sync"
@@ -91,4 +92,13 @@ var defaultRegistry = &Registry{
 
 func Default() *Registry {
 	return defaultRegistry
+}
+
+// LoadFromDB 从数据库中加载配置
+func LoadFromDB(ctx context.Context, dao *Dao) error {
+	items, err := dao.GetAllActive(ctx)
+	if err != nil {
+		return err
+	}
+	return Default().RegisterDny(items)
 }

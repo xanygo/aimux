@@ -5,33 +5,42 @@
 package web
 
 import (
-	"context"
 	"net/http"
-	"time"
 
-	"github.com/xanygo/anygo"
 	"github.com/xanygo/anygo/xhttp"
 	"github.com/xanygo/anygo/xhttp/xhandler"
 	"github.com/xanygo/anygo/xlog"
-	"github.com/xanygo/anygo/xnet/xservice"
 
 	"github.com/xanygo/aimux/internal/apigate"
-	"github.com/xanygo/aimux/internal/factory"
+	"github.com/xanygo/aimux/internal/config"
 	"github.com/xanygo/aimux/internal/web/admin"
 )
 
-var router = xhttp.NewRouter()
+func initAdminRouter(withAPI bool) *xhttp.Router {
+	router := xhttp.NewRouter()
+	registerMiddleware(router)
 
-func routerRegister() {
-	doInit()
-
-	adminGroup := router.Prefix("/admin/")
+	adminGroup := router.Prefix(config.AdminPath())
 	admin.Router(adminGroup)
 
-	router.Handle("/*", apigate.Default())
+	if withAPI {
+		router.Handle("/*", apigate.Default())
+	} else {
+		router.GetFunc("/", func(w http.ResponseWriter, req *http.Request) {
+			http.Redirect(w, req, "/admin/", http.StatusFound)
+		})
+	}
+	return router
 }
 
-func doInit() {
+func initAPIRouter() *xhttp.Router {
+	router := xhttp.NewRouter()
+	registerMiddleware(router)
+	router.Handle("/*", apigate.Default())
+	return router
+}
+
+func registerMiddleware(router *xhttp.Router) {
 	al := &xhandler.AccessLog{
 		Logger: xlog.AccessLogger(),
 		OnCookies: func(cookies []*http.Cookie) []xlog.Attr {
@@ -42,26 +51,4 @@ func doInit() {
 		},
 	}
 	router.Use(al.Next)
-
-	loadApiGate()
-
-	xservice.DefaultRegistry().Register(xservice.DefaultDummyService())
-}
-
-func loadApiGate() {
-	var err error
-	var ss apigate.Services
-	for i := 0; i < 3; i++ {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-		ss, err = factory.ServiceDao().GetAllActive(ctx)
-		xlog.Info(ctx, "apigate.GetAllActive", xlog.ErrorAttr("error", err), xlog.Int("ss.len", len(ss)))
-		cancel()
-		if err == nil {
-			err = apigate.Default().RegisterDny(ss)
-			xlog.Info(ctx, "apigate.RegisterDny", xlog.ErrorAttr("error", err))
-			anygo.Must(err)
-			break
-		}
-	}
-	anygo.Must(err)
 }

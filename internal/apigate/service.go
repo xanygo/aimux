@@ -46,16 +46,7 @@ func (ns Services) CloneEnabled() Services {
 		if n.Disabled {
 			continue
 		}
-		nns := n.Clone()
-		nns.Auths = xslice.Filter(nns.Auths, func(index int, item *Auth, okTotal int) bool {
-			return !item.Disabled
-		})
-		nns.Nodes = xslice.Filter(nns.Nodes, func(index int, item *Node, okTotal int) bool {
-			item.Auths = xslice.Filter(item.Auths, func(index int, item *Auth, okTotal int) bool {
-				return !item.Disabled
-			})
-			return !item.Disabled
-		})
+		nns := n.CloneEnabled()
 		clone = append(clone, nns)
 	}
 	return clone
@@ -113,6 +104,7 @@ type Service struct {
 
 func (s *Service) Clone() *Service {
 	return &Service{
+		ID:       s.ID,
 		Name:     s.Name,
 		Remark:   s.Remark,
 		Methods:  slices.Clone(s.Methods),
@@ -122,6 +114,27 @@ func (s *Service) Clone() *Service {
 		Disabled: s.Disabled,
 		Model:    s.Model,
 	}
+}
+
+// CloneEnabled 拷贝生成一份新的数据，但是会提出掉已被禁用的内容
+func (s *Service) CloneEnabled() *Service {
+	ns := s.Clone()
+	ns.Auths = slices.DeleteFunc(ns.Auths, func(auth *Auth) bool {
+		return auth.Disabled
+	})
+	ns.Nodes = slices.DeleteFunc(ns.Nodes, func(n *Node) bool {
+		if n.Disabled {
+			return true
+		}
+		n.Auths = slices.DeleteFunc(n.Auths, func(auth *Auth) bool {
+			return auth.Disabled
+		})
+		n.Models = slices.DeleteFunc(n.Models, func(m *Model) bool {
+			return m.Disabled
+		})
+		return false
+	})
+	return ns
 }
 
 var _ http.Handler = (*Service)(nil)
@@ -273,7 +286,7 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 	if err == nil {
 		body, err = io.ReadAll(req.Body)
 	}
-	dumpRequest(s, node, req, body)
+	dumpRequest(s, node, req, body, mod)
 
 	if err != nil {
 		dumpError(s, node, req, "read_request", err)
@@ -282,12 +295,19 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 		return
 	}
 
+	if mod != nil {
+		xlog.AddAttr(req.Context(), xlog.String("use.model", mod.ID))
+	}
+
 	if s.Model != "" || mod != nil {
 		data := make(map[string]any)
 		if err == nil {
 			err = xcodec.JSON.Decode(body, &data)
 		}
 		inputModel, ok := data["model"].(string)
+
+		xlog.AddAttr(req.Context(), xlog.String("request.model", inputModel))
+
 		if err == nil && !ok {
 			err = errors.New("no model field")
 		}

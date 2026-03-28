@@ -5,10 +5,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 
 	"github.com/xanygo/anygo/xattr"
 	"github.com/xanygo/anygo/xcfg"
+	"github.com/xanygo/anygo/xlog"
 	"github.com/xanygo/ext"
 
 	"github.com/xanygo/aimux/internal/config"
@@ -25,5 +27,6 @@ func main() {
 	flag.Parse()
 	xattr.MustInitAppMain(*c, xcfg.Parse)
 	config.Bootstrap()
-	web.Run()
+	err := web.Run()
+	xlog.Info(context.Background(), "aimux exited", xlog.ErrorAttr("error", err))
 }

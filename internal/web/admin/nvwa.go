@@ -9,6 +9,7 @@ import (
 	"errors"
 	"io/fs"
 	"net/http"
+	"path"
 
 	"github.com/xanygo/anygo"
 	"github.com/xanygo/nvwa"
@@ -21,8 +22,8 @@ import (
 var errUserNotFound = errors.New("user not found")
 
 var dashboard = &nvwa.Dashboard{
-	PathPrefix:    "/admin/",
-	AssetPrefix:   "/admin/asset/",
+	PathPrefix:    config.AdminPath(),
+	AssetPrefix:   path.Join(config.AdminPath(), "asset"),
 	RegisterAsset: "/asset/",
 	SecretKey:     config.SecretKey(),
 	TemplateFS:    anygo.Must1(fs.Sub(files, "tpls")),

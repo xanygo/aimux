@@ -18,12 +18,13 @@
 ## 2. 安装：
 
 ### 2.1 使用 docker-compose
-下载 [docker-compose.yml](./docker-compose.yml)
+下载 [docker-compose.yml](./docker-compose.yml),
 修改其中的账号、密码等，在同目录下创建 data 和 log 目录之后，使用
 ```
 docker compose up
 ```
 启动运行。
+
 之后可以通过 `http://127.0.0.1:8201/admin/` 访问管理页面。
 API 地址的前缀则为 `http://127.0.0.1:8200/` 。
 
@@ -38,5 +39,5 @@ aimux
 ```
 
 ### 2.2 下载二进制
-在 [releases 页面](/releases) 下载编译好的二进制。配置运行同上。
+在 [releases 页面](https://github.com/xanygo/aimux/releases) 下载编译好的二进制。配置运行同上。
 

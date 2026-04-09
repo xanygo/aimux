@@ -84,7 +84,7 @@ jobs:
           gh release delete nightly -y || true
           
           gh release create nightly \
-            dist/** \
+            $(find dist -type f) \
             --title "Nightly Release" \
             --notes "Automatically built from master commit $GITHUB_SHA on $(date -u +'%Y-%m-%d %H:%M:%S UTC')" \
             --prerelease

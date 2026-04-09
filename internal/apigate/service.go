@@ -166,12 +166,12 @@ func (s *Service) getAuthToken(req *http.Request) (string, error) {
 	return parts[1], nil
 }
 
-func (s *Service) checkModel(model string) error {
-	if s.Model != "" && s.Model != model {
-		return fmt.Errorf("model does not match, got=%q", model)
-	}
-	return nil
-}
+// func (s *Service) checkModel(model string) error {
+//	if s.Model != "" && s.Model != model {
+//		return fmt.Errorf("model does not match, got=%q", model)
+//	}
+//	return nil
+// }
 
 // ServeHTTP 处理 HTTP 请求，Service 以及相关信息都已经剔除掉 Disabled 状态的数据
 // 并且注册到 HTTP Router 里的是一份拷贝的数据，所以不需要锁

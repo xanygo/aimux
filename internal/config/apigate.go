@@ -23,15 +23,15 @@ import (
 
 // 加载配置文件中的静态配置
 func loadStaticAPIServices() {
-	value, ok := xattr.AppMain().GetOther("StaticAPIFile")
-	xlog.Info(context.Background(), "read AppMain().StaticAPIFile", xlog.Any("value", value), xlog.Bool("ok", ok))
+	value, ok := xattr.AppMain().GetOther("APPStaticAPIFile")
+	xlog.Info(context.Background(), "read AppMain().APPStaticAPIFile", xlog.Any("value", value), xlog.Bool("ok", ok))
 	if !ok {
 		return
 	}
 
 	filename, ok := value.(string)
 	if !ok {
-		log.Fatalf("invalid StaticAPIFile=%#v", value)
+		log.Fatalf("invalid APPStaticAPIFile=%#v", value)
 	}
 
 	var ss apigate.Services
@@ -39,6 +39,7 @@ func loadStaticAPIServices() {
 	xlog.Info(context.Background(), "parser static_api", xlog.ErrorAttr("err", err))
 	if err != nil && errors.Is(err, fs.ErrNotExist) {
 		xlog.Info(context.Background(), "static_api file not found, skipped")
+		return
 	}
 	anygo.Must(err)
 

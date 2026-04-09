@@ -43,6 +43,6 @@ func initFramework() {
 	// 可选：给 RPC client 注册日志中间件，用于打印日志
 	{
 		rl := &xrpc.Logger{}
-		xrpc.RegisterTCPIT(rl.Interceptor())
+		xrpc.RegisterIT(rl.Interceptor())
 	}
 }

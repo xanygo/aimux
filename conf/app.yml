@@ -11,7 +11,7 @@ Listen:
 #TempDir: "{env.AppTempDir}"
 
 # 运行模式，可选 debug，product
-RunMode: "debug"
+RunMode: "{env.RunMode|debug}"
 
 
 Other:
@@ -38,7 +38,7 @@ Other:
   KVDB: "{env.APPKVDB|file}"
 
   # 将请求和响应内容打印存储到 log/rpcdump/ 目录中，可用于分析&观察请求数据，可选，默认为 false
-  RPCDump: true
+  RPCDump: {env.APPRPCDump|true}
 
 # 管理员列表，必填
 Users:
@@ -47,5 +47,6 @@ Users:
 
 # 读取静态服务配置的文件名，可选
 # 建议还是使用 web 页面配置，所有配置的内容都会加密存储，安全性更好
-StaticAPIFile: {env.APPEnableStaticAPI|static_api.yml}
+# 若文件不存在，会跳过
+StaticAPIFile: {env.APPStaticAPIFile|static_api.yml}
 

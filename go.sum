@@ -18,8 +18,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
-github.com/xanygo/anygo v0.0.0-20260328063912-6893c13653c1 h1:X2myg8/Up46tToNpPa9/mMrrRSms1CPPWz9u4Z/qucc=
-github.com/xanygo/anygo v0.0.0-20260328063912-6893c13653c1/go.mod h1:1h3l23zQUqyXuPhWsrysfSfx1UHBD4lXoyxCuk7m0sw=
+github.com/xanygo/anygo v0.0.0-20260409072717-6175d12b0539 h1:Km7sXz8UUXqLA8vpODF+iabW+uHCqX+2P9IB7+sYlWc=
+github.com/xanygo/anygo v0.0.0-20260409072717-6175d12b0539/go.mod h1:Du0CyxgRsRpRGSCnt6Pye9R/uVJZEHrtlI0KvI7P6MI=
 github.com/xanygo/ext v0.0.0-20260228134916-3cc748f50bb3 h1:9Exazns7We4PG1zz7VlmEEbKRy7fPkZUxmsL0xgMom8=
 github.com/xanygo/ext v0.0.0-20260228134916-3cc748f50bb3/go.mod h1:oA/AXNxxdvMSVsTnrdcOFmYIGr2TZwjx8LpVqugWOVo=
 github.com/xanygo/nvwa v0.0.0-20260328051601-ce42a9f2d1a6 h1:Jc0nC3K3Yfq3nNkONICRLmvXLotx4OuGsTn0ceFXgkk=

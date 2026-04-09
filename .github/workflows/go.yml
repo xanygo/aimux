@@ -53,9 +53,23 @@ jobs:
         with:
           path: dist
 
-      - name: Create GitHub Release
+      - name: Create Tag Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: dist/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Nightly Release
+        if: github.ref == 'refs/heads/master'  && github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete nightly -y || true
+          
+          gh release create nightly \
+            dist/** \
+            --title "Nightly Release" \
+            --notes "Automatically built from master commit $GITHUB_SHA on $(date -u +'%Y-%m-%d %H:%M:%S UTC')" \
+            --prerelease

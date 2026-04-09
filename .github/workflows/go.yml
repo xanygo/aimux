@@ -54,9 +54,6 @@ jobs:
         with:
           path: dist
 
-      - name: Display structure of downloaded files
-        run: ls -R
-        
       - name: Create Tag Release
         uses: softprops/action-gh-release@v2
         with:
@@ -76,6 +73,9 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: dist
+
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Create Nightly Release
         env:

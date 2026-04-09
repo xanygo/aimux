@@ -54,6 +54,9 @@ jobs:
         with:
           path: dist
 
+      - name: Display structure of downloaded files
+        run: ls -R
+        
       - name: Create Tag Release
         uses: softprops/action-gh-release@v2
         with:

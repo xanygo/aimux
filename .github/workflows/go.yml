@@ -69,6 +69,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Download Artifact
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+
       - name: Create Nightly Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

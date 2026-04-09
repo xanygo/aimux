@@ -1,7 +1,7 @@
 Listen:
   # 管理页面 web server 地址，必填
   admin: "{env.APPListenAdmin|127.0.0.1:8080}"
-  # api server 地址，可选，当为空时，api 注册到 管理页面
+  # api server 地址，可选，当为空或者和 admin 的值一样时，api 注册到 管理页面
   api: "{env.APPListenAPI|127.0.0.1:8081}"
 
 # 数据目录，当为空时，默认会使用应用根目录下的 data 目录
@@ -29,7 +29,7 @@ Other:
   # memory: 存储在内存中，应用重启后就丢失，管理页面需要重新登录
   # file: 存储在应用的 temp 目录的文件中，默认值
   # kvdb： 存储在 kv 数据引擎，详见下列 KVDB 配置
-  Session: {env.APPSession|"cookie"}
+  Session: "{env.APPSession|cookie}"
 
   # 存储数据的 Key-Value DB 类型，必填，支持：
   # file：使用文件存储，存储在应用的 {DataDir}/xkv_db/ 目录下

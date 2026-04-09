@@ -1,0 +1,20 @@
+services:
+  aimux:
+    image: ghcr.io/xanygo/aimux:latest
+    container_name: aimux
+    restart: always
+    ports:
+      - "8200:8200"
+      - "8201:8201"
+    volumes:
+      - ./data:/app/data
+      - ./log:/app/log
+    environment:
+      TZ: Asia/Shanghai
+      APPListenAPI: "0.0.0.0:8200"
+      APPListenAdmin: "0.0.0.0:8201"
+      RunMode: product # 可选 debug、product
+      APPSecretKey: "f2f2aeedcc3e15852712a49234993392" # 数据加密秘钥，需要重置
+      APPUsername: "admin"
+      APPPassword: "admin" # 管理后台账号密码，需要重置
+      APPRPCDump: "true"   # 是否开启 RPC Dump 功能

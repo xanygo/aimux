@@ -25,8 +25,9 @@ func Run() error {
 	defer cancel()
 
 	apiListen, _ := xattr.AppMain().GetListen("api")
+	adminListen, _ := xattr.AppMain().GetListen("admin")
 	// 若没有配置独立的 api gateway 端口，则和 admin 使用同一个端口
-	if apiListen == "" {
+	if apiListen == "" || apiListen == adminListen {
 		return runAdminServer(ctx, true)
 	}
 

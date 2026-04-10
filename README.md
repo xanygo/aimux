@@ -1,9 +1,23 @@
 # aimux API Gateway
 
+<!-- Keep these links. Translations will automatically update with the README. -->
+[中文](https://github.com/xanygo/aimux) |
+[Deutsch](https://zdoc.app/de/xanygo/aimux) | 
+[English](https://zdoc.app/en/xanygo/aimux) | 
+[Español](https://zdoc.app/es/xanygo/aimux) | 
+[français](https://zdoc.app/fr/xanygo/aimux) | 
+[日本語](https://zdoc.app/ja/xanygo/aimux) | 
+[한국어](https://zdoc.app/ko/xanygo/aimux) | 
+[Português](https://zdoc.app/pt/xanygo/aimux) | 
+[Русский](https://zdoc.app/ru/xanygo/aimux) 
+
+
 管理外部依赖的 API 以及其 APIKey。
 数据加密存储，避免在配置文件中或者环境变量中存储原始明文的 APIKey。
 
 使用 `aimux` 后，在 `openclaw.json` 或者环境变量中存储的是 `aimux` 分配的 APIKey，即使泄露也不会有任何影响。
+
+![功能介绍](https://github.com/user-attachments/assets/8b015708-2d24-4f02-aed0-dec31e6c3f17)
 
 ## 1. 特性：
  

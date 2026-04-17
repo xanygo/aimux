@@ -11,6 +11,7 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"slices"
 	"strings"
 	"sync"
@@ -166,13 +167,6 @@ func (s *Service) getAuthToken(req *http.Request) (string, error) {
 	return parts[1], nil
 }
 
-// func (s *Service) checkModel(model string) error {
-//	if s.Model != "" && s.Model != model {
-//		return fmt.Errorf("model does not match, got=%q", model)
-//	}
-//	return nil
-// }
-
 // ServeHTTP 处理 HTTP 请求，Service 以及相关信息都已经剔除掉 Disabled 状态的数据
 // 并且注册到 HTTP Router 里的是一份拷贝的数据，所以不需要锁
 func (s *Service) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -275,6 +269,34 @@ func (node *Node) Clone() *Node {
 
 var client = &xhttpc.Client{}
 
+func (node *Node) fullEndpoint(input *url.URL) (string, error) {
+	if input.RawQuery == "" {
+		return node.Endpoint, nil
+	}
+	if !strings.Contains(node.Endpoint, "?") {
+		return node.Endpoint + "?" + input.RawQuery, nil
+	}
+	u, err := url.Parse(node.Endpoint)
+	if err != nil {
+		return "", err
+	}
+	newQuery := u.Query()
+	var querySet bool
+	// 优先保留 Endpoint 里的同名 query
+	for k, vs := range input.Query() {
+		if !newQuery.Has(k) {
+			for _, v := range vs {
+				querySet = true
+				newQuery.Add(k, v)
+			}
+		}
+	}
+	if querySet {
+		u.RawQuery = newQuery.Encode()
+	}
+	return u.String(), nil
+}
+
 func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service) {
 	cred, err := node.oneCredentialByWeight()
 
@@ -329,7 +351,14 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 		return
 	}
 
-	nr, err := http.NewRequestWithContext(req.Context(), req.Method, node.Endpoint, nil)
+	endpoint, err := node.fullEndpoint(req.URL)
+	if err != nil {
+		dumpError(s, node, req, "build endpoint url", err)
+		ret := types.NewRequestError(err)
+		ret.Write(w)
+		return
+	}
+	nr, err := http.NewRequestWithContext(req.Context(), req.Method, endpoint, nil)
 	if err != nil {
 		ret := types.NewRequestError(err)
 		ret.Write(w)
@@ -341,11 +370,7 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 			nr.Header.Set("Authorization", "Bearer "+cred.APIKey)
 		}
 	}
-
-	if value := req.Header.Get("User-Agent"); value != "" {
-		nr.Header.Set("User-Agent", value)
-	}
-
+	node.copyHeader(req.Header, nr.Header)
 	nr.GetBody = func() (io.ReadCloser, error) {
 		return io.NopCloser(bytes.NewReader(body)), nil
 	}
@@ -387,6 +412,20 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 	})
 	mw := io.MultiWriter(w, pw)
 	io.Copy(mw, resp.Body)
+}
+
+func (node *Node) copyHeader(from http.Header, to http.Header) {
+	for k, vs := range from {
+		kl := strings.ToLower(k)
+		// 部分特殊的 header 不应该透传
+		switch kl {
+		case "authorization", "connection", "keep-alive", "transfer-encoding":
+			continue
+		}
+		for _, v := range vs {
+			to.Add(k, v)
+		}
+	}
 }
 
 func (node *Node) oneCredentialByWeight() (*Auth, error) {

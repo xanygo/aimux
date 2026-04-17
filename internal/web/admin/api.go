@@ -8,9 +8,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/xanygo/anygo"
+	"github.com/xanygo/anygo/ds/xcmp"
 	"github.com/xanygo/anygo/ds/xslice"
 	"github.com/xanygo/anygo/ds/xstr"
 	"github.com/xanygo/anygo/xhttp"
@@ -30,9 +32,19 @@ func (a apiHandler) GroupHandler() map[string]xhttp.PatternHandler {
 	return nil
 }
 
+var serviceSort = xcmp.Chain[*apigate.Service](
+	xcmp.TrueBack(func(t *apigate.Service) bool {
+		return t.Disabled
+	}),
+	xcmp.OrderAsc(func(t *apigate.Service) string {
+		return t.Name
+	}),
+)
+
 func (a apiHandler) Index(w http.ResponseWriter, req *http.Request) {
 	dao := factory.ServiceDao()
 	items, err := dao.GetAll(req.Context())
+	slices.SortFunc(items, serviceSort)
 	values := map[string]any{
 		"Title":  anygo.Must1(xi18n.RB(req.Context(), "API 列表", "layout@menu_api")),
 		"Static": apigate.Static,

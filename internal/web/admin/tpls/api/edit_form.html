@@ -131,7 +131,12 @@
     {{ if .WriteAble }}
     <div class="row my-2 g-2">
         <div class="col d-flex justify-content-center gap-5">
-            <input class="btn btn-primary" type="submit" value='{{ "提交" | xit "form@submit" }}'>
+            <input type="hidden" name="FormAction" value="" id="my_action">
+            <input class="btn btn-primary" type="submit" value='{{ "保存" | xit "form@submit" }}'>
+
+            <input class="btn btn-primary" type="submit"  value='{{ "保存 & 立即生效" | xit "form@submit" }}'
+                   onclick="$('#my_action').val('save_reload')">
+
             <input class="btn btn-primary" type="reset" value='{{ "重置" | xit "form@reset" }}'>
         </div>
     </div>

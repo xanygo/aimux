@@ -10,12 +10,14 @@ import (
 	"io/fs"
 	"net/http"
 	"path"
+	"text/template"
 
 	"github.com/xanygo/anygo"
 	"github.com/xanygo/nvwa"
 
 	"github.com/xanygo/aimux/internal/config"
 	"github.com/xanygo/aimux/internal/metric"
+	"github.com/xanygo/aimux/internal/resource"
 	"github.com/xanygo/aimux/internal/resource/i18n"
 )
 
@@ -55,6 +57,11 @@ var dashboard = &nvwa.Dashboard{
 		}
 		metric.LoginFailed()
 		return nil, errUserNotFound
+	},
+	FuncMap: template.FuncMap{
+		"zNeedReload": func() bool {
+			return resource.NeedReload()
+		},
 	},
 }
 

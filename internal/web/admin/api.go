@@ -5,6 +5,7 @@
 package admin
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -21,6 +22,7 @@ import (
 
 	"github.com/xanygo/aimux/internal/apigate"
 	"github.com/xanygo/aimux/internal/factory"
+	"github.com/xanygo/aimux/internal/resource"
 )
 
 var _ xhttp.GroupHandler = (*apiHandler)(nil)
@@ -123,8 +125,9 @@ func (a apiHandler) New(w http.ResponseWriter, req *http.Request) {
 }
 
 func (a apiHandler) Save(w http.ResponseWriter, req *http.Request) {
+	bd := xhttp.NewBinder(req)
 	var srv *apigate.Service
-	err := xhttp.Bind(req, &srv)
+	err := bd.Bind(&srv)
 	if err == nil {
 		err = a.checkService(srv)
 	}
@@ -164,9 +167,15 @@ func (a apiHandler) Save(w http.ResponseWriter, req *http.Request) {
 		webr.WriteJSONAuto(w, err)
 		return
 	}
-
 	rr := webr.Response{
 		Jump: dashboard.AbsLink("api/Edit?type=dyn&id=" + srv.ID),
+	}
+	if isSaveAndReload(bd) {
+		err = a.doReload(req.Context())
+		if err != nil {
+			rr.Code = 500
+			rr.Msg = "reload failed:" + err.Error()
+		}
 	}
 	rr.WriteJSON(w)
 }
@@ -189,7 +198,15 @@ func (a apiHandler) checkService(srv *apigate.Service) error {
 }
 
 func (a apiHandler) PostReload(w http.ResponseWriter, req *http.Request) {
-	dao := factory.ServiceDao()
-	err := apigate.LoadFromDB(req.Context(), dao)
+	err := a.doReload(req.Context())
 	webr.WriteJSONAuto(w, err)
+}
+
+func (a apiHandler) doReload(ctx context.Context) error {
+	dao := factory.ServiceDao()
+	err := apigate.LoadFromDB(ctx, dao)
+	if err == nil {
+		resource.ResetNeedReload()
+	}
+	return err
 }

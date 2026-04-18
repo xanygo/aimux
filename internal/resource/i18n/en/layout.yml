@@ -10,3 +10,6 @@
   Other: Edit API
 - Key: view_api
   Other: View API Detail
+
+- Key: need_reload
+  Other: Need Reload

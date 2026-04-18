@@ -3,9 +3,9 @@ module github.com/xanygo/aimux
 go 1.26.1
 
 require (
-	github.com/xanygo/anygo v0.0.0-20260416131201-0eacbdcd6377
+	github.com/xanygo/anygo v0.0.0-20260418090546-b63a0d400d8c
 	github.com/xanygo/ext v0.0.0-20260228134916-3cc748f50bb3
-	github.com/xanygo/nvwa v0.0.0-20260328051601-ce42a9f2d1a6
+	github.com/xanygo/nvwa v0.0.0-20260418090803-8c2640912166
 	github.com/xanygo/webr v0.0.0-20260306023530-ca37de7dc1c0
 	gopkg.in/yaml.v3 v3.0.1
 )

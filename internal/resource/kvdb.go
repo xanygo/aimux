@@ -5,8 +5,10 @@
 package resource
 
 import (
+	"context"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 
 	"github.com/xanygo/anygo/ds/xsync"
 	"github.com/xanygo/anygo/store/xkv"
@@ -20,28 +22,41 @@ import (
 
 var kvDB = xsync.OnceInit[xkv.Storage[string]]{
 	New: func() xkv.StringStorage {
-		dbType := xattr.GetDefault[string]("KVDB", "file")
-		pre, suf, found := strings.Cut(dbType, ":")
-		switch pre {
-		case "memory":
-			return xkv.NewMemoryStore()
-		case "file":
-			return &xkv.FileStore{
-				DataDir: filepath.Join(xattr.DataDir(), "xkv_db"),
-			}
-		case "redis":
-			if !found || suf == "" {
-				panic("invalid redis db type:" + dbType)
-			}
-			return &xkvx.RedisStorage{
-				KeyPrefix: "kxcms|",
-				Client:    xredis.NewClient(suf),
-			}
-		default:
-			panic("not support KVDB type: " + dbType)
+		return &xkv.Monitor[string]{
+			Store: newDB(),
+			AfterWrite: func(ctx context.Context, key string, err error) {
+				needReload.Store(true)
+			},
+			AfterDelete: func(ctx context.Context, key string, err error) {
+				needReload.Store(true)
+			},
 		}
 	},
 }
+
+func newDB() xkv.StringStorage {
+	dbType := xattr.GetDefault[string]("KVDB", "file")
+	pre, suf, found := strings.Cut(dbType, ":")
+	switch pre {
+	case "memory":
+		return xkv.NewMemoryStore()
+	case "file":
+		return &xkv.FileStore{
+			DataDir: filepath.Join(xattr.DataDir(), "xkv_db"),
+		}
+	case "redis":
+		if !found || suf == "" {
+			panic("invalid redis db type:" + dbType)
+		}
+		return &xkvx.RedisStorage{
+			KeyPrefix: "kxcms|",
+			Client:    xredis.NewClient(suf),
+		}
+	default:
+		panic("not support KVDB type: " + dbType)
+	}
+}
+
 var coder = &xsync.OnceInit[xcodec.Codec]{
 	New: func() xcodec.Codec {
 		aes := &xcodec.AesOFB{
@@ -61,4 +76,15 @@ func HashDB[T any](key string) xkv.Hash[T] {
 		Codec:   coder.Load(),
 	}
 	return tr.Hash(key)
+}
+
+var needReload atomic.Bool
+
+// NeedReload 数据已变化，是否需要重新加载
+func NeedReload() bool {
+	return needReload.Load()
+}
+
+func ResetNeedReload() {
+	needReload.Store(false)
 }

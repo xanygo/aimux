@@ -12,24 +12,24 @@
     <input type="hidden" name="ID" value="{{ .ID }}">
     <div class="row my-2 ms-1 g-2">
         <div class="col bg-primary-subtle p-2  rounded">
-            <span class="fw-bold">{{ "编号" | xit "api-form@id" }}：</span>
+            <span class="fw-bold">{{ "编号" | xit "api-form/id" }}：</span>
             <span>{{ .ID }}</span>
         </div>
     </div>
     <div class="row my-2 g-2">
         <div class="col-sm-5">
             <div class="input-group">
-                <span class="input-group-text required label-fixed">{{ "名称" | xit "api-form@name" }}：</span>
+                <span class="input-group-text required label-fixed">{{ "名称" | xit "api-form/name" }}：</span>
                 <input name="Name" type="text" class="form-control" value="{{ .Name }}">
             </div>
         </div>
         <div class="col-auto">
             <div class="input-group">
-                <span class="input-group-text label-fixed">{{ "状态" | xit "api-form@status" }}：</span>
+                <span class="input-group-text label-fixed">{{ "状态" | xit "api-form/status" }}：</span>
                 {{ $selected := xSelectedValue .Disabled }}
                 <select name="Disabled" class="form-select" data-value-type="boolean">
-                    <option {{ $selected.Value false }}>{{ "正常" | xit "api-form@enabled" }}</option>
-                    <option {{ $selected.Value true }}>{{ "禁用" | xit "api-form@disabled" }}</option>
+                    <option {{ $selected.Value false }}>{{ "正常" | xit "api-form/enabled" }}</option>
+                    <option {{ $selected.Value true }}>{{ "禁用" | xit "api-form/disabled" }}</option>
                 </select>
             </div>
         </div>
@@ -38,7 +38,7 @@
     <div class="row my-2 g-2">
         <div class="col-sm-5">
             <div class="input-group">
-                <span class="input-group-text required label-fixed">{{ "请求方法" | xit "api-form@methods" }}：</span>
+                <span class="input-group-text required label-fixed">{{ "请求方法" | xit "api-form/methods" }}：</span>
                 {{ $checked := xCheckedValue .Methods }}
                 {{ range $z,$method:=$.Methods }}
                 <label class="mx-1 col-form-label">
@@ -49,7 +49,7 @@
         </div>
         <div class="col-sm-7">
             <div class="input-group">
-                <span class="input-group-text required label-fixed">{{ "路由地址" | xit "api-form@route" }}：</span>
+                <span class="input-group-text required label-fixed">{{ "路由地址" | xit "api-form/route" }}：</span>
                 <input name="Route" type="text" class="form-control" value="{{ .Route }}">
             </div>
         </div>
@@ -58,19 +58,19 @@
     <div class="row my-2 g-2">
         <div class="col-sm-5">
             <div class="input-group">
-                <span class="input-group-text label-fixed">{{ "模型名称" | xit "api-form@model_name" }}：</span>
+                <span class="input-group-text label-fixed">{{ "模型名称" | xit "api-form/model_name" }}：</span>
                 <input name="Model" type="text" class="form-control" value="{{ .Model }}">
             </div>
         </div>
         <div class="col-auto">
-            <span class="form-text col-form-label">{{ "可选，若无值，则客户端可以传任意值(验证 JSON Body 的 model 字段)" | xit "api-form@model_name_note" }}</span>
+            <span class="form-text col-form-label">{{ "可选，若无值，则客户端可以传任意值(验证 JSON Body 的 model 字段)" | xit "api-form/model_name_note" }}</span>
         </div>
     </div>
 
     <div class="row my-2 g-2">
         <div class="col">
             <div class="input-group">
-                <span class="input-group-text label-fixed">{{ "备注" | xit "api-form@remark" }}：</span>
+                <span class="input-group-text label-fixed">{{ "备注" | xit "api-form/remark" }}：</span>
                 <textarea name="Remark" class="form-control">{{ .Remark }}</textarea>
             </div>
         </div>
@@ -79,14 +79,14 @@
     <div class="my-2">
         <div class="card my-1">
             <div class="card-header">
-                {{ "认证信息" | xit "api-form@credentials" }}
+                {{ "认证信息" | xit "api-form/credentials" }}
                 {{ if $.WriteAble }}
                 <button type="button" class="btn btn-sm"
                         onclick="webr.AddRow(this,'#auth_item_tpl_a',$(this).closest('.card').find('.dest_auth'))"
                 >+</button>
                 {{ end }}
                 <span class="form-text col-form-label text-danger">
-                    {{ "可选，请求需要携带 Header Authorization: Bearer $APIKey" | xit "api-form@need_one" }}
+                    {{ "可选，请求需要携带 Header Authorization: Bearer $APIKey" | xit "api-form/need_one" }}
                 </span>
             </div>
             <div class="card-body dest_auth">
@@ -101,14 +101,14 @@
     <div class="my-2">
         <div class="card my-1">
             <div class="card-header">
-                <span class="required">{{ "下游节点" | xit "api-form@nodes" }}</span>
+                <span class="required">{{ "下游节点" | xit "api-form/nodes" }}</span>
                 {{ if $.WriteAble }}
                 <button type="button" class="btn btn-sm"
                         onclick="webr.AddRow(this,'#node_item_tpl',$(this).closest('.card').find('.dest_nodes'))"
                 >+</button>
                 {{ end }}
                 <span class="form-text col-form-label">
-                    {{ "必填，至少一个" | xit "api-form@need_one" }}
+                    {{ "必填，至少一个" | xit "api-form/need_one" }}
                 </span>
             </div>
             <div class="card-body dest_nodes">
@@ -123,7 +123,7 @@
 
     <div>
         <p class="form-text">
-            {{ "所有配置了权重的条目，每次访问时按权重随机选取一个使用" | xit "api-form@weight_note" }}
+            {{ "所有配置了权重的条目，每次访问时按权重随机选取一个使用" | xit "api-form/weight_note" }}
         </p>
 
     </div>
@@ -132,12 +132,12 @@
     <div class="row my-2 g-2">
         <div class="col d-flex justify-content-center gap-5">
             <input type="hidden" name="FormAction" value="" id="my_action">
-            <input class="btn btn-primary" type="submit" value='{{ "保存" | xit "form@submit" }}'>
+            <input class="btn btn-primary" type="submit" value='{{ "保存" | xit "form/submit" }}'>
 
-            <input class="btn btn-primary" type="submit"  value='{{ "保存 & 立即生效" | xit "form@submit" }}'
+            <input class="btn btn-primary" type="submit"  value='{{ "保存 & 立即生效" | xit "form/submit" }}'
                    onclick="$('#my_action').val('save_reload')">
 
-            <input class="btn btn-primary" type="reset" value='{{ "重置" | xit "form@reset" }}'>
+            <input class="btn btn-primary" type="reset" value='{{ "重置" | xit "form/reset" }}'>
         </div>
     </div>
     {{ end }}

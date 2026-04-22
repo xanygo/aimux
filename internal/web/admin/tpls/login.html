@@ -35,19 +35,19 @@
 {{ define "login-form" }}
 <form  class="card-body needs-validation mt-3" method="post" id="login-form" action='{{ abs_link "login"}}'>
     <div class="row mb-3">
-        <label class="col-3 col-form-label text-end text-nowrap">{{ "账&nbsp;&nbsp;&nbsp;号"|xit "login@username"| xHTML }}：</label>
+        <label class="col-3 col-form-label text-end text-nowrap">{{ "账&nbsp;&nbsp;&nbsp;号"|xit "login/username"| xHTML }}：</label>
         <div class="col-9">
             <input type="text" class="form-control" name="Name"  required  autocomplete="off" />
         </div>
     </div>
     <div class="row mb-3">
-        <label class="col-3 col-form-label text-end text-nowrap">{{ "密&nbsp;&nbsp;&nbsp;码" | xit "login@password" | xHTML }}：</label>
+        <label class="col-3 col-form-label text-end text-nowrap">{{ "密&nbsp;&nbsp;&nbsp;码" | xit "login/password" | xHTML }}：</label>
         <div class="col-9">
             <input type="password"  class="form-control" name="Password" required autocomplete="off" />
         </div>
     </div>
     <div class="row mb-3">
-        <label class="col-3 col-form-label text-end text-nowrap">{{ "验证码" | xit "login@caption" }}：</label>
+        <label class="col-3 col-form-label text-end text-nowrap">{{ "验证码" | xit "login/caption" }}：</label>
         <div class="col-9">
             <div class="input-group">
                 <input type="hidden" name="TP" value="login"/>
@@ -58,8 +58,8 @@
     </div>
     <div class="row mb-3">
         <div class="d-flex justify-content-around">
-            <input type="submit"  class="btn btn-primary px-4" value='{{ "登录"|xit "login@submit"}}'>
-            <input type="reset"  class="btn btn-primary px-4" value='{{ "重置" |xit "login@reset" }}'>
+            <input type="submit"  class="btn btn-primary px-4" value='{{ "登录"|xit "login/submit"}}'>
+            <input type="reset"  class="btn btn-primary px-4" value='{{ "重置" |xit "login/reset" }}'>
         </div>
 
     </div>

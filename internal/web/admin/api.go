@@ -48,7 +48,7 @@ func (a apiHandler) Index(w http.ResponseWriter, req *http.Request) {
 	items, err := dao.GetAll(req.Context())
 	slices.SortFunc(items, serviceSort)
 	values := map[string]any{
-		"Title":  anygo.Must1(xi18n.RB(req.Context(), "API 列表", "layout@menu_api")),
+		"Title":  anygo.Must1(xi18n.RB(req.Context(), "API 列表", "layout/menu_api")),
 		"Static": apigate.Static,
 		"Dyn":    items,
 		"Error":  err,
@@ -85,7 +85,7 @@ func (a apiHandler) View(w http.ResponseWriter, req *http.Request) {
 		srv = srv.CloneEnabled()
 	}
 	values := map[string]any{
-		"Title":     anygo.Must1(xi18n.RB(req.Context(), " 查看API", "layout@view_api")) + "-" + srv.Name,
+		"Title":     anygo.Must1(xi18n.RB(req.Context(), " 查看API", "layout/view_api")) + "-" + srv.Name,
 		"Srv":       srv,
 		"WriteAble": false,
 		"Methods":   httpMethods,
@@ -102,7 +102,7 @@ func (a apiHandler) Edit(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	values := map[string]any{
-		"Title":     anygo.Must1(xi18n.RB(req.Context(), "编辑 API", "layout@edit_api")) + "-" + srv.Name,
+		"Title":     anygo.Must1(xi18n.RB(req.Context(), "编辑 API", "layout/edit_api")) + "-" + srv.Name,
 		"Srv":       srv,
 		"WriteAble": writeAble,
 		"Methods":   httpMethods,
@@ -116,13 +116,30 @@ func (a apiHandler) New(w http.ResponseWriter, req *http.Request) {
 		Methods: []string{"GET", "POST"},
 	}
 	values := map[string]any{
-		"Title":     anygo.Must1(xi18n.RB(req.Context(), "创建API", "layout@create_api")),
+		"Title":     anygo.Must1(xi18n.RB(req.Context(), "创建API", "layout/create_api")),
 		"Srv":       srv,
 		"WriteAble": true,
 		"Methods":   httpMethods,
 	}
 	dashboard.RenderWithLayout(req.Context(), w, req, "api_edit.html", values)
 }
+
+var srvNodeSort = xcmp.Chain[*apigate.Node](
+	xcmp.TrueBack(func(t *apigate.Node) bool {
+		return t.Disabled
+	}),
+)
+
+var srvAuthSort = xcmp.Chain[*apigate.Auth](
+	xcmp.TrueBack(func(t *apigate.Auth) bool {
+		return t.Disabled
+	}),
+)
+var srvModeSort = xcmp.Chain[*apigate.Model](
+	xcmp.TrueBack(func(t *apigate.Model) bool {
+		return t.Disabled
+	}),
+)
 
 func (a apiHandler) Save(w http.ResponseWriter, req *http.Request) {
 	bd := xhttp.NewBinder(req)
@@ -162,6 +179,13 @@ func (a apiHandler) Save(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
+	slices.SortFunc(srv.Nodes, srvNodeSort)
+	slices.SortFunc(srv.Auths, srvAuthSort)
+	for _, n := range srv.Nodes {
+		slices.SortFunc(n.Models, srvModeSort)
+		slices.SortFunc(n.Auths, srvAuthSort)
+	}
+
 	err = dao.Set(req.Context(), srv.ID, srv)
 	if err != nil {
 		webr.WriteJSONAuto(w, err)

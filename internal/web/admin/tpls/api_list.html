@@ -2,12 +2,12 @@
 
 {{ define "api_list/table_head_tr" }}
 <tr>
-    <th>{{ "编号" | xit "api-form@id" }}</th>
-    <th>{{ "名称" | xit "api-form@name" }}</th>
-    <th>{{ "备注" | xit "api-form@remark" }}</th>
-    <th>{{ "路由" | xit "api-form@route" }}</th>
-    <th>{{ "状态" | xit "api-form@status" }}</th>
-    <th>{{ "管理" | xit "api-list@manage" }}</th>
+    <th>{{ "编号" | xit "api-form/id" }}</th>
+    <th>{{ "名称" | xit "api-form/name" }}</th>
+    <th>{{ "备注" | xit "api-form/remark" }}</th>
+    <th>{{ "路由" | xit "api-form/route" }}</th>
+    <th>{{ "状态" | xit "api-form/status" }}</th>
+    <th>{{ "管理" | xit "api-list/manage" }}</th>
 </tr>
 {{ end }}
 
@@ -19,19 +19,19 @@
         <td>{{ $item.Remark }}</td>
         <td>{{ $item.RouterPattern }}</td>
         <td>{{- if $item.Disabled -}}
-            <span class="text-danger">{{ "禁用" | xit "api-form@disabled" }}</span>
+            <span class="text-danger">{{ "禁用" | xit "api-form/disabled" }}</span>
             {{- else -}}
-            <span class="text-success">{{ "正常" | xit "api-form@enabled" }}</span>
+            <span class="text-success">{{ "正常" | xit "api-form/enabled" }}</span>
             {{- end -}}
         </td>
         <td>
-            <a href="View?type={{ $.Type}}&id={{ $item.ID }}">🖥️ {{ "查看" | xit "api-list@view" }}</a>
+            <a href="View?type={{ $.Type}}&id={{ $item.ID }}">🖥️ {{ "查看" | xit "api-list/view" }}</a>
             &nbsp;
             {{ if ne $.Type "static"}}
-            <a href="Edit?type={{ $.Type}}&id={{ $item.ID }}" class="ms-3">📝 {{ "编辑" | xit "api-list@edit" }}</a>
+            <a href="Edit?type={{ $.Type}}&id={{ $item.ID }}" class="ms-3">📝 {{ "编辑" | xit "api-list/edit" }}</a>
             {{ end }}
             &nbsp;
-            <a href="View?type={{ $.Type}}&id={{ $item.ID }}&clear=1">🔎 {{ "清理&查看" | xit "api-list@view" }}</a>
+            <a href="View?type={{ $.Type}}&id={{ $item.ID }}&clear=1">🔎 {{ "清理&查看" | xit "api-list/view" }}</a>
         </td>
     </tr>
     {{ end }}
@@ -46,10 +46,10 @@
         <tr>
             <td colspan="6" class="bg-primary-subtle rounded ">
                 <span class="text-primary fw-bold">
-                    {{ "静态配置" | xit "api-list@static_title" }}
+                    {{ "静态配置" | xit "api-list/static_title" }}
                 </span>
                 <span class="text-muted">
-                   ( {{ "来源：配置文件" | xit "api-list@static_subtitle" }} )
+                   ( {{ "来源：配置文件" | xit "api-list/static_subtitle" }} )
                 </span>
 
             </td>
@@ -68,10 +68,10 @@
     <tr>
         <td colspan="6" class="bg-primary-subtle rounded">
             <span class="text-primary fw-bold">
-                {{ "动态配置" | xit "api-list@dyn_title" }}
+                {{ "动态配置" | xit "api-list/dyn_title" }}
             </span>
             <span class="text-muted">
-                 ( {{ "来源：数据库" | xit "api-list@dyn_subtitle" }} )
+                 ( {{ "来源：数据库" | xit "api-list/dyn_subtitle" }} )
             </span>
 
             <a class="ms-5 btn btn-sm btn-primary" href="New">+</a>

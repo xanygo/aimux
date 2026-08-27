@@ -24,10 +24,7 @@ var kvDB = xsync.OnceInit[xkv.Storage[string]]{
 	New: func() xkv.StringStorage {
 		return &xkv.Monitor[string]{
 			Store: newDB(),
-			AfterWrite: func(ctx context.Context, key string, err error) {
-				needReload.Store(true)
-			},
-			AfterDelete: func(ctx context.Context, key string, err error) {
+			After: func(ctx context.Context, dataType xkv.DataType, action string, err error, keys ...string) {
 				needReload.Store(true)
 			},
 		}
@@ -48,7 +45,7 @@ func newDB() xkv.StringStorage {
 		if !found || suf == "" {
 			panic("invalid redis db type:" + dbType)
 		}
-		return &xkvx.RedisStorage{
+		return &xkvx.RedisStore{
 			KeyPrefix: "kxcms|",
 			Client:    xredis.NewClient(suf),
 		}

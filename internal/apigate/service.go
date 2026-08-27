@@ -72,7 +72,7 @@ func (ns Services) FIndByID(id string) (*Service, error) {
 }
 
 func (ns Services) Routes() []string {
-	return xslice.FilterAs(ns, func(index int, item *Service, ok int) (string, bool) {
+	return xslice.FilterAs(ns, func(item *Service) (string, bool) {
 		return item.Route, true
 	})
 }

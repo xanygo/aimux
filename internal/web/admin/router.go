@@ -9,13 +9,12 @@ import (
 	"github.com/xanygo/anygo/xhttp"
 	"github.com/xanygo/anygo/xi18n"
 
-	"github.com/xanygo/aimux/internal/resource"
 	"github.com/xanygo/aimux/internal/resource/i18n"
 )
 
 func Router(router *xhttp.Router) {
 	sh := &xsession.HTTPHandler{
-		NewStorage: resource.SessionStorage(),
+		NewStorage: xsession.MustLoadStorageFunc("admin"),
 	}
 	router.Use(sh.Next)
 

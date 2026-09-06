@@ -36,7 +36,7 @@ func loadStaticAPIServices() {
 
 	var ss apigate.Services
 	err := xcfg.Parse(filename, &ss)
-	xlog.Info(context.Background(), "parser static_api", xlog.ErrorAttr("err", err))
+	xlog.Info(context.Background(), "parser static_api", xlog.Err("err", err))
 	if err != nil && errors.Is(err, fs.ErrNotExist) {
 		xlog.Info(context.Background(), "static_api file not found, skipped")
 		return

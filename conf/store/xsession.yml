@@ -1,0 +1,5 @@
+Items:
+  - Name: admin
+    Type: Cookie
+    Life: 30d
+    CipherKey: f2f2aeedcc3e15852712a49234993392

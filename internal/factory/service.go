@@ -34,11 +34,11 @@ func MustLoadFromDB() {
 	for i := 0; i < 3; i++ {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 		ss, err = ServiceDao().GetAllActive(ctx)
-		xlog.Info(ctx, "apigate.GetAllActive", xlog.ErrorAttr("error", err), xlog.Int("ss.len", len(ss)))
+		xlog.Info(ctx, "apigate.GetAllActive", xlog.Err("error", err), xlog.Int("ss.len", len(ss)))
 		cancel()
 		if err == nil {
 			err = apigate.Default().RegisterDny(ss)
-			xlog.Info(ctx, "apigate.RegisterDny", xlog.ErrorAttr("error", err))
+			xlog.Info(ctx, "apigate.RegisterDny", xlog.Err("error", err))
 			anygo.Must(err)
 			break
 		}

@@ -28,5 +28,5 @@ func main() {
 	xattr.MustInitAppMain(*c, xcfg.Parse)
 	config.Bootstrap()
 	err := web.Run()
-	xlog.Info(context.Background(), "aimux exited", xlog.ErrorAttr("error", err))
+	xlog.Info(context.Background(), "aimux exited", xlog.Err("error", err))
 }

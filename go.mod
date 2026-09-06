@@ -3,7 +3,7 @@ module github.com/xanygo/aimux
 go 1.27.0
 
 require (
-	github.com/xanygo/anygo v0.0.0-20260827123812-89ccb025ad28
+	github.com/xanygo/anygo v0.0.0-20260906071413-9f0b5b60ae08
 	github.com/xanygo/ext v0.0.0-20260823112634-d2d4302c4c49
 	github.com/xanygo/nvwa v0.0.0-20260422102407-504640fdcc62
 	github.com/xanygo/webr v0.0.0-20260714111933-cdd9b801798f

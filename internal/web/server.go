@@ -50,7 +50,7 @@ func runAdminServer(ctx context.Context, withAPI bool) error {
 	}
 	ser.SetKeepAlivesEnabled(true)
 	err := ser.ListenAndServe()
-	xlog.Warn(ctx, "admin server exit", xlog.ErrorAttr("error", err))
+	xlog.Warn(ctx, "admin server exit", xlog.Err("error", err))
 	return err
 }
 
@@ -62,6 +62,6 @@ func runAPIServer(ctx context.Context, listen string) error {
 	}
 	ser.SetKeepAlivesEnabled(true)
 	err := ser.ListenAndServe()
-	xlog.Warn(ctx, "api server exit", xlog.ErrorAttr("error", err))
+	xlog.Warn(ctx, "api server exit", xlog.Err("error", err))
 	return err
 }

@@ -18,8 +18,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
-github.com/xanygo/anygo v0.0.0-20260827123812-89ccb025ad28 h1:f6Rg0FKbUzHcz6RCOh7XfpxTFiOlkld5gnANZossDbY=
-github.com/xanygo/anygo v0.0.0-20260827123812-89ccb025ad28/go.mod h1:zpUt2D4+10gv7pDKsdYZQMl3Kqta0q0CwbgziqAvqCk=
+github.com/xanygo/anygo v0.0.0-20260906071413-9f0b5b60ae08 h1:B/K9FejsT8gJParSJpq/lajjanCBn2wUaGweK9XqcHk=
+github.com/xanygo/anygo v0.0.0-20260906071413-9f0b5b60ae08/go.mod h1:zpUt2D4+10gv7pDKsdYZQMl3Kqta0q0CwbgziqAvqCk=
 github.com/xanygo/ext v0.0.0-20260823112634-d2d4302c4c49 h1:pA+gucQCHte6dRRC0fpa8xkV3xlsOhXpcg8nQQm+v4U=
 github.com/xanygo/ext v0.0.0-20260823112634-d2d4302c4c49/go.mod h1:k3Xt83oZg+jCrZDbZnQsOwVB34iBA/8c/vY8w8r7EBU=
 github.com/xanygo/nvwa v0.0.0-20260422102407-504640fdcc62 h1:OCivB0dhv2+QxIBLqKoVTgj7o7Yi5OuYMGyZPYDFkzY=

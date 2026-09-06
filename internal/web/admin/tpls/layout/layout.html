@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-{{ template "layout_head.html" . }}
+{{ template "layout/head.html" . }}
 </head>
 <body>
-{{ template "layout_nav.html" . }}
+{{ template "layout/nav.html" . }}
 <div class="container mt-4" style="min-height: 75vh">
     <div class="row">
         <div class="col"> {{ .Body | xHTML }} </div>
     </div>
 </div>
-{{ template "layout_footer.html" . }}
+{{ template "layout/footer.html" . }}
 </body>
 </html>

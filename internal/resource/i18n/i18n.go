@@ -8,17 +8,17 @@ import (
 	"embed"
 
 	"github.com/xanygo/anygo"
-	"github.com/xanygo/anygo/xcodec"
+	"github.com/xanygo/anygo/xenc"
 	"github.com/xanygo/anygo/xi18n"
 	"gopkg.in/yaml.v3"
 )
 
-//go:embed en/* zh/*
+//go:embed zh/* en/*
 var files embed.FS
 
-var Resource = &xi18n.Bundle{}
+var Resource = xi18n.NewBundle(xi18n.LangZh, xi18n.LangEn)
 
 func init() {
-	err := xi18n.LoadFS(Resource, files, ".", ".yml", xcodec.DecodeFunc(yaml.Unmarshal))
+	err := xi18n.LoadFS(Resource, files, ".", ".yml", xenc.UnmarshalFunc(yaml.Unmarshal))
 	anygo.Must(err)
 }

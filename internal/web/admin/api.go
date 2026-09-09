@@ -13,11 +13,11 @@ import (
 	"strings"
 
 	"github.com/xanygo/anygo"
-	"github.com/xanygo/anygo/ds/xcmp"
-	"github.com/xanygo/anygo/ds/xslice"
-	"github.com/xanygo/anygo/ds/xstr"
+	"github.com/xanygo/anygo/xcmp"
 	"github.com/xanygo/anygo/xhttp"
 	"github.com/xanygo/anygo/xi18n"
+	"github.com/xanygo/anygo/xslice"
+	"github.com/xanygo/anygo/xstr"
 	"github.com/xanygo/webr"
 
 	"github.com/xanygo/aimux/internal/apigate"
@@ -48,7 +48,7 @@ func (a apiHandler) Index(w http.ResponseWriter, req *http.Request) {
 	items, err := dao.GetAll(req.Context())
 	slices.SortFunc(items, serviceSort)
 	values := map[string]any{
-		"Title":  anygo.Must1(xi18n.RB(req.Context(), "API 列表", "layout/menu_api")),
+		"Title":  anygo.Must1(xi18n.RB(req.Context(), "接口列表", "layout/menu_api")),
 		"Static": apigate.Static,
 		"Dyn":    items,
 		"Error":  err,
@@ -68,8 +68,7 @@ func (a apiHandler) getService(req *http.Request) (*apigate.Service, bool, error
 		srv, err := factory.ServiceDao().Get(req.Context(), id)
 		return srv, true, err
 	default:
-		err := fmt.Errorf("invalie type: %q", typ)
-		return nil, false, err
+		return nil, false, fmt.Errorf("invalie type: %q", typ)
 	}
 }
 
@@ -80,12 +79,17 @@ func (a apiHandler) View(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if srv == nil {
+		showError(w, req, "API Not Found")
+		return
+	}
+
 	// 只保留有效的配置内容
 	if srv != nil && req.URL.Query().Get("clear") != "" {
 		srv = srv.CloneEnabled()
 	}
 	values := map[string]any{
-		"Title":     anygo.Must1(xi18n.RB(req.Context(), " 查看API", "layout/view_api")) + "-" + srv.Name,
+		"Title":     anygo.Must1(xi18n.RB(req.Context(), " 查看接口", "layout/view_api")) + "-" + srv.Name,
 		"Srv":       srv,
 		"WriteAble": false,
 		"Methods":   httpMethods,
@@ -101,8 +105,12 @@ func (a apiHandler) Edit(w http.ResponseWriter, req *http.Request) {
 		showError(w, req, err.Error())
 		return
 	}
+	if srv == nil {
+		showError(w, req, "API Not Found")
+		return
+	}
 	values := map[string]any{
-		"Title":     anygo.Must1(xi18n.RB(req.Context(), "编辑 API", "layout/edit_api")) + "-" + srv.Name,
+		"Title":     anygo.Must1(xi18n.RB(req.Context(), "编辑接口", "layout/edit_api")) + "-" + srv.Name,
 		"Srv":       srv,
 		"WriteAble": writeAble,
 		"Methods":   httpMethods,
@@ -116,7 +124,7 @@ func (a apiHandler) New(w http.ResponseWriter, req *http.Request) {
 		Methods: []string{"GET", "POST"},
 	}
 	values := map[string]any{
-		"Title":     anygo.Must1(xi18n.RB(req.Context(), "创建API", "layout/create_api")),
+		"Title":     anygo.Must1(xi18n.RB(req.Context(), "创建接口", "layout/create_api")),
 		"Srv":       srv,
 		"WriteAble": true,
 		"Methods":   httpMethods,

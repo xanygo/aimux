@@ -1,0 +1,11 @@
+Name : kvdb
+
+Database:
+  Driver: sqlite3  # 可选，mysql，pgx，sqlite3
+  # https://github.com/xanygo/anygo/tree/master/store/xdb
+  DSN: {xattr.RelDataDir|store/aimux.db}
+  # DSN: data/store/aimux.db
+
+DownStream:
+  Address:
+    - 'dummy:80'

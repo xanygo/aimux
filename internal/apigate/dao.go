@@ -8,8 +8,8 @@ import (
 	"context"
 	"slices"
 
-	"github.com/xanygo/anygo/ds/xmap"
 	"github.com/xanygo/anygo/store/xkv"
+	"github.com/xanygo/anygo/xmap"
 )
 
 type Dao struct {

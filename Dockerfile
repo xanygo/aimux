@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.26 AS builder
+FROM docker.io/library/golang:1.27 AS builder
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/
 
 COPY --from=builder /app/aimux /app/aimux
-COPY --from=builder /app/conf/app.yml /app/conf/app.yml
+COPY --from=builder /app/conf/ /app/conf/
 
 RUN useradd -m -u 10001 work && chown -R work:work /app
 USER work

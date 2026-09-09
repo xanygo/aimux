@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xanygo/anygo/ds/xsync"
 	"github.com/xanygo/anygo/xlog"
+	"github.com/xanygo/anygo/xsync"
 )
 
 var bp = xsync.NewBytesBufferPool(1024 * 100)

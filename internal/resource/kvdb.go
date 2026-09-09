@@ -6,45 +6,25 @@ package resource
 
 import (
 	"context"
-	"log"
 	"sync/atomic"
 
-	"github.com/xanygo/anygo/ds/xsync"
 	"github.com/xanygo/anygo/store/xkv"
 	"github.com/xanygo/anygo/store/xkv/xkvx"
-	"github.com/xanygo/anygo/xcodec"
-
-	"github.com/xanygo/aimux/internal/config"
 )
 
-var kvDB = xsync.OnceInit[xkv.Storage[string]]{
-	New: func() xkv.StringStorage {
-		return &xkv.Monitor[string]{
-			Store: xkvx.MustLoad[string]("default"),
-			After: func(ctx context.Context, dataType xkv.DataType, action string, err error, keys ...string) {
-				if !xkv.IsReadAction(dataType, action) {
-					log.Println("kxdb action:", dataType, action)
-					needReload.Store(true)
-				}
-			},
-		}
-	},
-}
-
-var coder = &xsync.OnceInit[xcodec.Codec]{
-	New: func() xcodec.Codec {
-		aes := &xcodec.AesOFB{
-			Key: config.SecretKey(),
-		}
-		return xcodec.CodecWithCipher(xcodec.JSON, aes)
-	},
+func getKVDB[V any]() xkv.Storage[V] {
+	return &xkv.Monitor[V]{
+		Store: xkvx.MustLoad[V]("default"),
+		After: func(ctx context.Context, dataType xkv.DataType, action string, err error, keys ...string) {
+			if !xkv.IsReadAction(dataType, action) {
+				needReload.Store(true)
+			}
+		},
+	}
 }
 
 func HashDB[T any](key string) xkv.Hash[T] {
-	tr := &xkv.Transformer[T]{
-		Storage: kvDB.Load(),
-		Codec:   coder.Load(),
-	}
+	tr := getKVDB[T]()
 	return tr.Hash(key)
 }
 

@@ -7,7 +7,7 @@ package metric
 import (
 	"time"
 
-	"github.com/xanygo/anygo/ds/xcounter"
+	"github.com/xanygo/anygo/xcounter"
 )
 
 var loginFailCounter = xcounter.NewSlidingWindow(30*time.Minute, 10*time.Second)

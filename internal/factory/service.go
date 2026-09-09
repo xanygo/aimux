@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/xanygo/anygo"
-	"github.com/xanygo/anygo/ds/xsync"
 	"github.com/xanygo/anygo/xlog"
+	"github.com/xanygo/anygo/xsync"
 
 	"github.com/xanygo/aimux/internal/apigate"
 	"github.com/xanygo/aimux/internal/resource"

@@ -7,8 +7,8 @@
 - Key: static_title
   Other: Static configuration
 - Key: static_subtitle
-  Other: loaded from config file
+  Other: From File
 - Key: dyn_title
   Other: Dynamic configuration
 - Key: dyn_subtitle
-  Other: loaded from database
+  Other: From Database

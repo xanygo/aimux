@@ -8,7 +8,13 @@ import (
 	"context"
 	"path/filepath"
 
+	_ "github.com/go-sql-driver/mysql" // mysql driver
+	_ "github.com/jackc/pgx/v5"        // pgx driver
+	_ "github.com/ncruces/go-sqlite3/driver"
 	"github.com/xanygo/anygo"
+	"github.com/xanygo/anygo/store/xcache/xcachex"
+	"github.com/xanygo/anygo/store/xkv/xkvx"
+	"github.com/xanygo/anygo/store/xsession"
 	"github.com/xanygo/anygo/xattr"
 	"github.com/xanygo/anygo/xlog"
 	"github.com/xanygo/anygo/xnet/xrpc"
@@ -18,10 +24,12 @@ import (
 func Bootstrap() {
 	initFramework()
 
-	{
-		initRPCDump()
-		loadStaticAPIServices()
-	}
+	xkvx.MustCheckConfig()
+	xsession.MustCheckConfig()
+	xcachex.MustCheckConfig()
+
+	initRPCDump()
+	loadStaticAPIServices()
 }
 
 // 依据配置，初始化框架

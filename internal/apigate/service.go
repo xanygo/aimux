@@ -16,11 +16,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/xanygo/anygo/ds/xslice"
 	"github.com/xanygo/anygo/safely"
-	"github.com/xanygo/anygo/xcodec"
+	"github.com/xanygo/anygo/xenc/xcodec"
 	"github.com/xanygo/anygo/xhttp/xhttpc"
 	"github.com/xanygo/anygo/xlog"
+	"github.com/xanygo/anygo/xslice"
 
 	"github.com/xanygo/aimux/internal/types"
 )
@@ -324,7 +324,7 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 	if s.Model != "" || mod != nil {
 		data := make(map[string]any)
 		if err == nil {
-			err = xcodec.JSON.Decode(body, &data)
+			err = xcodec.JSON.Unmarshal(body, &data)
 		}
 		inputModel, ok := data["model"].(string)
 
@@ -339,7 +339,7 @@ func (node *Node) serveHTTP(w http.ResponseWriter, req *http.Request, s *Service
 			}
 			if err == nil && mod != nil {
 				data["model"] = mod.ID
-				body, err = xcodec.JSON.Encode(data)
+				body, err = xcodec.JSON.Marshal(data)
 			}
 		}
 	}

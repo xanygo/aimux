@@ -1,4 +1,10 @@
 Items:
   - Name: default
-    Type: File
-    Dir: {xattr.DataDir}/store/xkv/
+    Type: DB
+    Service: kvdb
+    AutoMigrate: true
+    Codec:
+      Type: JSON
+      Cipher:
+        Type: AesGCM
+        Key: {env.APPSecretKey|f2f2aeedcc3e15852712a49234993392}

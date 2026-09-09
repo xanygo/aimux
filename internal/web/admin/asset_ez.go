@@ -8,9 +8,9 @@ import (
 	_ "embed"
 	"io/fs"
 
-	"github.com/xanygo/anygo/ds/xsync"
-	"github.com/xanygo/anygo/ds/xzip"
-	"github.com/xanygo/anygo/xcodec"
+	"github.com/xanygo/anygo/xenc/xcipher"
+	"github.com/xanygo/anygo/xenc/xcompress"
+	"github.com/xanygo/anygo/xsync"
 )
 
 //go:embed asset.ez
@@ -18,7 +18,7 @@ var _346b69b7f6fe703ea269901f900374fb []byte
 
 var _346b69b7f6fe703ea269901f900374fbOnce = &xsync.OnceInit[fs.FS]{
 	New: func() fs.FS {
-		dz := &xcodec.AesOFB{
+		dz := &xcipher.AesOFB{
 			Key: string([]byte{
 				'6', 'b', '6', '5', 'f', '8', 'd', 'a',
 				'a', 'e', '3', '2', '7', '0', 'd', '8',
@@ -26,7 +26,7 @@ var _346b69b7f6fe703ea269901f900374fbOnce = &xsync.OnceInit[fs.FS]{
 				'8', '3', '2', '7', 'a', '8', '0', '1',
 			}),
 		}
-		rd := xzip.MustDecrypt(_346b69b7f6fe703ea269901f900374fb, dz)
+		rd := xcompress.MustDecryptZip(_346b69b7f6fe703ea269901f900374fb, dz)
 		clear(_346b69b7f6fe703ea269901f900374fb)
 		_346b69b7f6fe703ea269901f900374fb = nil
 		return rd

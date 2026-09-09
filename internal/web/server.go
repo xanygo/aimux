@@ -8,10 +8,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/xanygo/anygo/ds/xmime"
-	"github.com/xanygo/anygo/ds/xsync"
 	"github.com/xanygo/anygo/xattr"
 	"github.com/xanygo/anygo/xlog"
+	"github.com/xanygo/anygo/xmime"
+	"github.com/xanygo/anygo/xsync"
 
 	"github.com/xanygo/aimux/internal/factory"
 )

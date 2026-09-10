@@ -6,10 +6,10 @@ require (
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/ncruces/go-sqlite3 v0.35.4
-	github.com/xanygo/anygo v0.0.0-20260909101154-560c619a5abd
+	github.com/xanygo/anygo v0.0.0-20260910023213-63ac3336a5a8
 	github.com/xanygo/ext v0.0.0-20260907064344-4449aacf373b
-	github.com/xanygo/nvwa v0.0.0-20260908081354-5841c391bbe6
-	github.com/xanygo/webr v0.0.0-20260907065448-67e686a23ad5
+	github.com/xanygo/nvwa v0.0.0-20260910023533-35c31cbe660f
+	github.com/xanygo/webr v0.0.0-20260910023435-c4baf2ed7645
 	gopkg.in/yaml.v3 v3.0.1
 )
 

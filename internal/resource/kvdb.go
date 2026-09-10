@@ -8,8 +8,8 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/xanygo/anygo/store/xkv"
-	"github.com/xanygo/anygo/store/xkv/xkvx"
+	"github.com/xanygo/anygo/xkv"
+	"github.com/xanygo/anygo/xkv/xkvx"
 )
 
 func getKVDB[V any]() xkv.Storage[V] {

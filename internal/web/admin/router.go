@@ -5,8 +5,8 @@
 package admin
 
 import (
-	"github.com/xanygo/anygo/store/xsession"
 	"github.com/xanygo/anygo/xhttp"
+	"github.com/xanygo/anygo/xhttp/xsession"
 	"github.com/xanygo/anygo/xi18n"
 
 	"github.com/xanygo/aimux/internal/resource/i18n"
